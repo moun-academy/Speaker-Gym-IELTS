@@ -1,0 +1,4740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#facc15">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Speaker's Gym">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>The Speaker's Gym - MOUN Academy</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 24px;
+      padding: 28px;
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    /* Hamburger Menu Button */
+    .hamburger-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: all 0.2s;
+      z-index: 100;
+    }
+
+    .hamburger-btn:hover {
+      background: rgba(30, 41, 59, 1);
+      border-color: rgba(250, 204, 21, 0.5);
+      transform: scale(1.05);
+    }
+
+    /* Hamburger Menu Overlay */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .menu-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Hamburger Menu Sidebar */
+    .menu-sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      border-right: 1px solid rgba(250, 204, 21, 0.3);
+      z-index: 1000;
+      transition: left 0.3s ease;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .menu-sidebar.show {
+      left: 0;
+    }
+
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .menu-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    .menu-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      border: none;
+      color: #ef4444;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .menu-close:hover {
+      background: rgba(239, 68, 68, 0.3);
+      transform: scale(1.1);
+    }
+
+    .menu-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(55, 65, 81, 0.5);
+      color: #e5e7eb;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(250, 204, 21, 0.1);
+      border-color: rgba(250, 204, 21, 0.3);
+      transform: translateX(4px);
+    }
+
+    .menu-item.active {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.1));
+      border-color: rgba(250, 204, 21, 0.5);
+      color: #facc15;
+    }
+
+    .menu-item-icon {
+      font-size: 20px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(55, 65, 81, 0.5);
+      margin: 16px 0;
+    }
+
+    .menu-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(55, 65, 81, 0.5);
+      font-size: 12px;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Page containers */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Back button for sub-pages */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(55, 65, 81, 0.5);
+      color: #9ca3af;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(250, 204, 21, 0.3);
+      color: #e5e7eb;
+    }
+
+    /* Warm Up Page Styles */
+    .warmup-section {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .warmup-section h3 {
+      font-size: 18px;
+      color: #facc15;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .warmup-exercise {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.5);
+    }
+
+    .warmup-exercise:last-child {
+      margin-bottom: 0;
+    }
+
+    .warmup-exercise h4 {
+      font-size: 15px;
+      color: #e5e7eb;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .warmup-exercise p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .warmup-timer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .warmup-timer-display {
+      font-size: 24px;
+      font-weight: 700;
+      color: #22c55e;
+      min-width: 60px;
+    }
+
+    .warmup-timer-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tongue-twister-box {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(250, 204, 21, 0.05));
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .tongue-twister-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fde68a;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .tongue-twister-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    /* Breathing Animation */
+    .breathing-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    .breathing-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(147, 197, 253, 0.6), rgba(59, 130, 246, 0.4), rgba(30, 64, 175, 0.3));
+      box-shadow:
+        0 0 40px rgba(59, 130, 246, 0.3),
+        0 0 80px rgba(59, 130, 246, 0.2),
+        inset 0 0 30px rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .breathing-circle::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgba(147, 197, 253, 0.4);
+      animation: breathePulse 4s ease-in-out infinite;
+    }
+
+    .breathing-circle.animating {
+      animation: breathe 8s ease-in-out infinite;
+    }
+
+    .breathing-circle.animating::before {
+      animation: breathePulse 8s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 40px rgba(59, 130, 246, 0.3),
+          0 0 80px rgba(59, 130, 246, 0.2),
+          inset 0 0 30px rgba(255, 255, 255, 0.1);
+      }
+      50% {
+        transform: scale(1.5);
+        box-shadow:
+          0 0 60px rgba(59, 130, 246, 0.5),
+          0 0 120px rgba(59, 130, 246, 0.3),
+          inset 0 0 40px rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    @keyframes breathePulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.4;
+      }
+      50% {
+        transform: scale(1.6);
+        opacity: 0.1;
+      }
+    }
+
+    .breathing-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      z-index: 1;
+    }
+
+    .breathing-instruction {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    .breathing-phase {
+      font-size: 20px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-top: 16px;
+      min-height: 28px;
+    }
+
+    /* Settings Page Styles */
+    .settings-section {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .settings-section h3 {
+      font-size: 16px;
+      color: #facc15;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .settings-row-label {
+      font-size: 14px;
+      color: #e5e7eb;
+    }
+
+    .settings-row-value {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    /* Profile Icon Button */
+    .profile-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    .profile-btn:hover {
+      background: rgba(30, 41, 59, 1);
+      border-color: rgba(250, 204, 21, 0.5);
+      transform: scale(1.05);
+    }
+
+    .profile-btn.signed-in {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .profile-btn.syncing::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      background: #facc15;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 260px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1000;
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+      margin-bottom: 12px;
+    }
+
+    .profile-email {
+      color: #facc15;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .profile-sync-status {
+      font-size: 11px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-sync-status .sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .profile-sync-status.syncing .sync-dot {
+      background: #facc15;
+      animation: pulse 1.5s infinite;
+    }
+
+    .profile-sync-status.error .sync-dot {
+      background: #ef4444;
+    }
+
+    .profile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .profile-action-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-action-btn:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(250, 204, 21, 0.5);
+    }
+
+    .profile-action-btn.primary {
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      color: #0f172a;
+      border: none;
+      font-weight: 600;
+    }
+
+    .profile-action-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .brand {
+      font-size: 13px;
+      color: #9ca3af;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .brand-name {
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(250, 204, 21, 0.3);
+    }
+
+    /* Week Calendar */
+    .week-calendar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+    }
+
+    .day-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .day-label { font-size: 10px; color: #6b7280; text-transform: uppercase; }
+
+    .day-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1f2937;
+      border: 2px solid #374151;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .day-circle.completed {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: #22c55e;
+    }
+
+    .day-circle.today { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3); }
+
+    /* Stats */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat { text-align: center; }
+    .stat-value { font-size: 22px; font-weight: bold; color: #facc15; }
+    .stat-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
+
+    /* Word Box */
+    .word-box {
+      background: linear-gradient(135deg, #020617, #0f172a);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      border: 1px solid #1f2937;
+      text-align: center;
+    }
+
+    .word-box.active { border-color: rgba(250, 204, 21, 0.5); }
+
+    .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 6px; }
+
+    .word {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .definition { font-size: 14px; color: #d1d5db; }
+
+    /* Prompt Mode Toggle (Random Words vs IELTS) */
+    .prompt-mode-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .prompt-mode-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid #374151;
+      background: #1f2937;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prompt-mode-btn:hover {
+      border-color: rgba(250, 204, 21, 0.5);
+      color: #e5e7eb;
+    }
+
+    .prompt-mode-btn.active {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.1));
+      color: #facc15;
+      border-color: rgba(250, 204, 21, 0.5);
+    }
+
+    .prompt-mode-btn .mode-icon {
+      font-size: 16px;
+    }
+
+    /* IELTS Question Display */
+    .ielts-question {
+      display: none;
+      padding: 8px 0;
+    }
+
+    .ielts-question.show {
+      display: block;
+    }
+
+    .ielts-part-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .ielts-part-badge.part1 {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .ielts-part-badge.part2 {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .ielts-part-badge.part3 {
+      background: rgba(168, 85, 247, 0.2);
+      color: #a855f7;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .ielts-question-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #e5e7eb;
+      line-height: 1.5;
+      text-align: left;
+      padding: 0 8px;
+    }
+
+    .ielts-question-text.part2 {
+      font-size: 17px;
+    }
+
+    .ielts-subpoints {
+      margin-top: 12px;
+      padding-left: 20px;
+      text-align: left;
+    }
+
+    .ielts-subpoints li {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    /* Hide definition when in IELTS mode */
+    .word-box.ielts-mode .definition {
+      display: none;
+    }
+
+    .word-box.ielts-mode .word {
+      display: none;
+    }
+
+    .word-box.ielts-mode .label {
+      display: none;
+    }
+
+    /* Mode Selector */
+    .mode-selector {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mode-btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 2px solid #374151;
+      background: #1f2937;
+      color: #d1d5db;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .mode-btn:hover { border-color: #facc15; }
+    .mode-btn.active { background: linear-gradient(135deg, #facc15, #fbbf24); color: #0f172a; border-color: #facc15; }
+
+    /* Timer */
+    .timer-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .timer-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: #0f172a;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      transition: all 0.3s;
+    }
+
+    .timer-circle.warning { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .timer-circle.danger { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+    .timer-legend { font-size: 12px; color: #9ca3af; margin-top: 8px; }
+
+    /* Camera Section */
+    .camera-section { display: none; margin-bottom: 20px; }
+    .camera-section.active { display: block; }
+
+    .video-container {
+      position: relative;
+      max-width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #videoElement { 
+      width: 100%; 
+      height: auto;
+      display: block; 
+      transform: scaleX(-1); 
+    }
+
+    .video-timer {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .video-timer .rec { width: 10px; height: 10px; background: #ef4444; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1s infinite; }
+
+    /* Audio Section */
+    .audio-section { display: none; margin-bottom: 20px; text-align: center; }
+    .audio-section.active { display: block; }
+
+    .audio-visualizer {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .audio-visualizer.recording { animation: pulse 1s infinite; box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
+
+    /* Rapid Fire Section */
+    .rapid-fire-section { display: none; text-align: center; margin-bottom: 20px; }
+    .rapid-fire-section.active { display: block; }
+
+    .rapid-fire-sentence {
+      font-size: 38px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.3;
+      letter-spacing: 0.02em;
+    }
+
+    .rapid-fire-because {
+      font-size: 32px;
+      font-weight: 700;
+      color: #facc15;
+      text-align: center;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+
+    .rapid-fire-timer {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #0f172a;
+      transition: all 0.3s;
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+    }
+
+    .rapid-fire-timer.warning {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+    }
+
+    .rapid-fire-timer.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      animation: pulse 0.5s infinite;
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.6);
+    }
+
+    .rapid-fire-round-info {
+      font-size: 16px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .rapid-fire-settings {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .rapid-fire-settings h4 {
+      font-size: 16px;
+      color: #facc15;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .rapid-fire-setting {
+      margin-bottom: 16px;
+    }
+
+    .rapid-fire-setting:last-child {
+      margin-bottom: 0;
+    }
+
+    .rapid-fire-setting label {
+      display: block;
+      font-size: 13px;
+      color: #d1d5db;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .rapid-fire-setting select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #1f2937;
+      color: #e5e7eb;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .rapid-fire-cue {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(251, 191, 36, 0.05));
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      color: #fde68a;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .rapid-fire-stats {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .rapid-fire-stat {
+      text-align: center;
+    }
+
+    .rapid-fire-stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .rapid-fire-stat-label {
+      font-size: 10px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .controls button {
+      min-width: 140px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover { transform: translateY(-2px); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    button.primary { background: linear-gradient(135deg, #facc15, #fbbf24); color: #0f172a; }
+    button.secondary { background: linear-gradient(135deg, #374151, #4b5563); }
+    button.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+    /* Rating Modal */
+    .rating-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .rating-modal.show { display: flex; }
+
+    .rating-content {
+      background: #1f2937;
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      max-width: 360px;
+      width: 90%;
+    }
+
+    .rating-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .rating-subtitle { font-size: 14px; color: #9ca3af; margin-bottom: 20px; }
+
+    .rating-stars {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .star {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #374151;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .star:hover, .star.selected { background: #facc15; transform: scale(1.1); }
+
+    /* Nudge Banner */
+    .nudge-banner {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: #a7f3d0;
+      display: none;
+    }
+
+    .nudge-banner.show { display: block; }
+
+    /* Download Section */
+    .download-section {
+      display: none;
+      padding: 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .download-section.show { display: block; }
+    .download-link { color: #22c55e; font-weight: 600; }
+
+    .transcript-input {
+      width: 100%;
+      min-height: 90px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    /* Share Button */
+    .share-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
+    /* Achievement Toast */
+    .achievement {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      color: #0f172a;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(250, 204, 21, 0.4);
+      transform: translateX(400px);
+      transition: transform 0.4s ease;
+      z-index: 1000;
+    }
+
+    .achievement.show { transform: translateX(0); }
+
+    /* Unlocks Section */
+    .unlocks-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .unlock-badge {
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #1f2937;
+      color: #6b7280;
+      border: 1px solid #374151;
+    }
+
+    .unlock-badge.unlocked {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.1));
+      color: #facc15;
+      border-color: rgba(250, 204, 21, 0.3);
+    }
+
+    /* Show Structure Button - Premium Style */
+    .structure-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 32px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      background: linear-gradient(135deg, #fde047, #facc15, #eab308);
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow:
+        0 4px 15px rgba(250, 204, 21, 0.4),
+        0 1px 3px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .structure-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .structure-btn:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 6px 20px rgba(250, 204, 21, 0.5),
+        0 2px 5px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .structure-btn:hover::before {
+      left: 100%;
+    }
+
+    .structure-btn:active {
+      transform: translateY(0);
+      box-shadow:
+        0 2px 10px rgba(250, 204, 21, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .structure-btn .btn-icon {
+      font-size: 20px;
+    }
+
+    .structure-btn.active {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: #e5e7eb;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Structure Guide */
+    .structure-box {
+      display: none;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #475569;
+    }
+
+    .formula-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .formula-btn {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid #374151;
+      background: #1f2937;
+      color: #d1d5db;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .formula-btn:hover { border-color: #facc15; }
+    .formula-btn.active { background: linear-gradient(135deg, #facc15, #fbbf24); color: #0f172a; border-color: #facc15; }
+
+    .structure-content { color: #e2e8f0; line-height: 1.7; font-size: 14px; }
+
+    .structure-section {
+      background: rgba(15, 23, 42, 0.5);
+      border-left: 3px solid #facc15;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+    }
+
+    .structure-section h4 {
+      color: #facc15;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .structure-section strong { color: #fbbf24; display: block; margin: 6px 0; }
+    .structure-section em { color: #94a3b8; font-style: normal; display: block; margin-left: 12px; font-size: 13px; }
+
+    .example-box {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 6px;
+      padding: 10px;
+      margin: 8px 0;
+      font-style: italic;
+      color: #a7f3d0;
+      font-size: 13px;
+    }
+
+    /* Recording buttons */
+    .record-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .record-btn {
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .record-btn.start {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      animation: recordPulse 2s infinite;
+    }
+
+    .record-btn.stop {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+
+    @keyframes recordPulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 4px 30px rgba(239, 68, 68, 0.6); }
+    }
+
+    .rec-dot {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .record-btn.start:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    /* AI Feedback */
+    .ai-panel {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 16px 0;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .ai-panel h3 {
+      font-size: 16px;
+      margin: 0;
+      color: #facc15;
+    }
+
+    .ai-toggle {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      display: inline-block;
+    }
+
+    .ai-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .ai-toggle .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #374151;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .ai-toggle .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    .ai-toggle input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .ai-toggle input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .ai-panel .helper {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ai-panel .field-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .ai-panel input { flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #374151; background: #0f172a; color: #e5e7eb; }
+    .ai-panel button { padding: 10px 12px; border-radius: 8px; border: none; background: linear-gradient(135deg, #22c55e, #16a34a); color: #0f172a; font-weight: 700; cursor: pointer; }
+
+    .ai-status { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+    .ai-status.error { color: #f87171; }
+
+    .ai-feedback-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; padding: 12px; color: #e2e8f0; font-size: 14px; white-space: pre-wrap; }
+
+    /* Notification Settings */
+    .notification-settings {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-toggle {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .notification-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #374151;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    .notification-toggle input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .notification-toggle input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .notification-time-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .notification-time-row label {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .notification-time-row input[type="time"] {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    .notification-status {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+
+    .notification-status.active {
+      color: #22c55e;
+    }
+
+    .notification-status.denied {
+      color: #ef4444;
+    }
+
+    /* App Version Footer */
+    .app-version {
+      text-align: center;
+      padding: 16px 0 0 0;
+      margin-top: 20px;
+      border-top: 1px solid rgba(55, 65, 81, 0.5);
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    /* Removed old Firebase Auth & Sync styles - now using profile dropdown */
+
+    @media (max-width: 640px) {
+      .container { padding: 20px; padding-top: 60px; }
+      h1 { font-size: 24px; }
+      .word { font-size: 28px; }
+      .controls { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+
+      /* Mobile: Reset header padding */
+      .header {
+        padding-top: 0;
+        padding-bottom: 8px;
+      }
+
+      /* Mobile: Position hamburger menu at absolute top-left of viewport */
+      .hamburger-btn {
+        position: fixed;
+        top: 28px;
+        left: 28px;
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+        z-index: 500;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(250, 204, 21, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .profile-btn {
+        position: fixed;
+        top: 28px;
+        right: 28px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        z-index: 500;
+        background: rgba(15, 23, 42, 0.95);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .profile-btn.syncing::after {
+        top: -1px;
+        right: -1px;
+        width: 8px;
+        height: 8px;
+      }
+
+      /* Mobile: Adjust dropdown to fit screen */
+      .profile-dropdown {
+        position: fixed;
+        top: 48px;
+        right: 8px;
+        left: 8px;
+        min-width: auto;
+        max-width: 340px;
+        margin: 0 auto;
+      }
+
+      /* Mobile: Adjust Rapid Fire for smaller screens */
+      .rapid-fire-sentence {
+        font-size: 26px;
+        line-height: 1.4;
+      }
+
+      .rapid-fire-because {
+        font-size: 24px;
+      }
+
+      .rapid-fire-timer {
+        width: 100px;
+        height: 100px;
+        font-size: 36px;
+      }
+
+      .rapid-fire-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .rapid-fire-stat-value {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hamburger Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- Hamburger Menu Sidebar -->
+  <div class="menu-sidebar" id="menuSidebar">
+    <div class="menu-header">
+      <span class="menu-title">Menu</span>
+      <button class="menu-close" id="menuClose">×</button>
+    </div>
+    <nav class="menu-nav">
+      <div class="menu-item active" id="menuHome" data-page="main">
+        <span class="menu-item-icon">🏠</span>
+        <span>Home</span>
+      </div>
+      <div class="menu-item" id="menuRapidFire" data-page="rapidfire">
+        <span class="menu-item-icon">⚡</span>
+        <span>Rapid Fire</span>
+      </div>
+      <div class="menu-item" id="menuWarmUp" data-page="warmup">
+        <span class="menu-item-icon">🎤</span>
+        <span>Warm Up</span>
+      </div>
+      <div class="menu-divider"></div>
+      <div class="menu-item" id="menuSettings" data-page="settings">
+        <span class="menu-item-icon">⚙️</span>
+        <span>Settings</span>
+      </div>
+    </nav>
+  </div>
+
+  <div class="container page active" id="mainPage">
+    <div class="header">
+      <!-- Hamburger Menu Button -->
+      <div class="hamburger-btn" id="hamburgerBtn">☰</div>
+
+      <h1>🏋️ The Speaker's Gym</h1>
+      <div class="brand">by <span class="brand-name">MOUN Academy</span></div>
+
+      <!-- Profile Button -->
+      <div class="profile-btn" id="profileBtn">
+        <span id="profileIcon">👤</span>
+      </div>
+
+      <!-- Profile Dropdown -->
+      <div class="profile-dropdown" id="profileDropdown">
+        <!-- When signed out -->
+        <div id="profileSignedOut">
+          <div class="profile-actions">
+            <button class="profile-action-btn primary" id="profileGoogleSignInBtn">
+              <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                <path fill="none" d="M0 0h48v48H0z"/>
+              </svg>
+              Sign in with Google
+            </button>
+            <div style="font-size: 11px; color: #9ca3af; text-align: center; margin-top: 4px;">
+              Sync your data across devices
+            </div>
+          </div>
+        </div>
+
+        <!-- When signed in -->
+        <div id="profileSignedIn" style="display: none;">
+          <div class="profile-dropdown-header">
+            <div class="profile-email" id="profileUserEmail">user@example.com</div>
+            <div class="profile-sync-status" id="profileSyncStatus">
+              <span class="sync-dot"></span>
+              <span id="profileSyncStatusText">Up to date</span>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="profile-action-btn" id="profileSignOutBtn">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week Calendar -->
+    <div class="week-calendar" id="weekCalendar"></div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value" id="speechCount">0</span>
+        <span class="stat-label">Today</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="streak">0</span>
+        <span class="stat-label">Streak 🔥</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="avgRating">-</span>
+        <span class="stat-label">Avg Feel</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="totalSpeeches">0</span>
+        <span class="stat-label">All Time</span>
+      </div>
+    </div>
+
+    <!-- Nudge Banner -->
+    <div class="nudge-banner" id="nudgeBanner"></div>
+
+    <!-- Prompt Mode Toggle -->
+    <div class="prompt-mode-toggle">
+      <button class="prompt-mode-btn active" id="randomWordsBtn">
+        <span class="mode-icon">🎲</span>
+        <span>Random Words</span>
+      </button>
+      <button class="prompt-mode-btn" id="ieltsBtn">
+        <span class="mode-icon">📝</span>
+        <span>IELTS Questions</span>
+      </button>
+    </div>
+
+    <!-- Word Box -->
+    <div class="word-box" id="wordBox">
+      <!-- Random Words Mode -->
+      <div class="label">Your Word</div>
+      <div id="word" class="word">Ready?</div>
+      <div class="definition" id="definition">Click "New Word" to get started</div>
+
+      <!-- IELTS Mode -->
+      <div class="ielts-question" id="ieltsQuestion">
+        <span class="ielts-part-badge part1" id="ieltsBadge">Part 1</span>
+        <div class="ielts-question-text" id="ieltsQuestionText">Click "New Question" to get an IELTS speaking question</div>
+        <ul class="ielts-subpoints" id="ieltsSubpoints" style="display: none;"></ul>
+      </div>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+      <button class="mode-btn active" id="timerOnlyBtn">⏱️ Timer</button>
+      <button class="mode-btn" id="audioBtn">🎙️ Audio</button>
+      <button class="mode-btn" id="cameraBtn">📹 Video</button>
+    </div>
+
+    <!-- Timer Section -->
+    <div class="timer-section" id="timerSection">
+      <div id="timerCircle" class="timer-circle">0:00</div>
+      <div class="timer-legend">🟢 0-1min | 🟠 1-1.5min | 🔴 1.5-2.5min</div>
+      <div class="record-controls">
+        <button id="startTimerBtn" class="record-btn start"><span class="rec-dot"></span> Start Speaking</button>
+        <button id="stopTimerBtn" class="record-btn stop" style="display: none;">⏹ Stop</button>
+      </div>
+    </div>
+
+    <!-- Audio Section -->
+    <div class="audio-section" id="audioSection">
+      <div class="audio-visualizer" id="audioVisualizer">🎙️</div>
+      <div id="audioTimer" style="font-size: 28px; font-weight: bold;">0:00</div>
+      <div class="timer-legend">Audio recording • 2.5 min max</div>
+      <div class="record-controls">
+        <button id="startAudioBtn" class="record-btn start"><span class="rec-dot"></span> Start Recording</button>
+        <button id="stopAudioBtn" class="record-btn stop" style="display: none;">⏹ Stop Recording</button>
+      </div>
+      <div class="download-section" id="audioDownload">
+        <p style="color: #22c55e; margin-bottom: 8px;">✅ Recording saved!</p>
+        <a href="#" id="audioDownloadLink" class="download-link" download="speech.webm">Download Recording</a>
+      </div>
+    </div>
+
+    <!-- Camera Section -->
+    <div class="camera-section" id="cameraSection">
+      <div class="video-container">
+        <video id="videoElement" autoplay muted playsinline></video>
+        <div class="video-timer" id="videoTimer"><span class="rec"></span><span id="videoTimerDisplay">0:00</span></div>
+      </div>
+      <div class="record-controls">
+        <button id="startVideoBtn" class="record-btn start"><span class="rec-dot"></span> Start Recording</button>
+        <button id="stopVideoBtn" class="record-btn stop" style="display: none;">⏹ Stop Recording</button>
+      </div>
+      <div class="download-section" id="videoDownload">
+        <p style="color: #22c55e; margin-bottom: 8px;">✅ Recording saved!</p>
+        <a href="#" id="videoDownloadLink" class="download-link" download="speech.webm">Download Recording</a>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="newWordBtn" class="primary">New Word</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <!-- AI Feedback -->
+    <div class="ai-panel">
+      <div class="ai-header">
+        <h3>🤖 AI Speech Analysis</h3>
+        <label class="ai-toggle">
+          <input type="checkbox" id="aiToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="helper">
+        <span id="aiToggleHelper">Get personalized feedback on your pace, pauses, and delivery.</span>
+      </div>
+      <textarea id="manualTranscript" class="transcript-input" placeholder="Transcript will appear here automatically after recording. You can also paste text for manual analysis."></textarea>
+      <div class="ai-status" id="aiStatus">Waiting for your next recording.</div>
+      <div class="ai-feedback-box" id="aiFeedback">Your detailed feedback will appear here after your speech.</div>
+    </div>
+
+    <!-- Structure Guide -->
+    <div style="text-align: center; margin: 24px 0;">
+      <button id="toggleStructureBtn" class="structure-btn">
+        <span class="btn-icon">✨</span>
+        <span>Structure Guide</span>
+      </button>
+    </div>
+
+    <div id="structureBox" class="structure-box">
+      <h3 style="font-size: 18px; color: #facc15; margin-bottom: 16px; text-align: center;">Your Speaking Roadmap</h3>
+
+      <div class="formula-selector">
+        <button class="formula-btn active" data-formula="one-thing">One Thing</button>
+        <button class="formula-btn" data-formula="two-types">Two Types</button>
+        <button class="formula-btn" data-formula="three-steps">Three Steps</button>
+      </div>
+
+      <div class="structure-content" id="structureContent">
+        Generate a word first to see your personalized speaking structure
+      </div>
+    </div>
+
+    <!-- App Version -->
+    <div class="app-version" id="appVersion">
+      Loading version...
+    </div>
+  </div>
+  <!-- END MAIN PAGE -->
+
+  <!-- RAPID FIRE PAGE -->
+  <div class="container page" id="rapidFirePage">
+    <button class="back-btn" id="rapidFireBackBtn">← Back to Home</button>
+    <h2 style="font-size: 24px; color: #facc15; margin-bottom: 20px; text-align: center;">⚡ Rapid Fire Analogies</h2>
+
+    <!-- Rapid Fire Content moved here -->
+    <div class="rapid-fire-section active" id="rapidFireSectionPage">
+      <!-- Settings (shown before starting) -->
+      <div id="rapidFireSettingsPage" class="rapid-fire-settings">
+        <h4>⚡ Rapid Fire Settings</h4>
+        <div class="rapid-fire-setting">
+          <label>Time per Round</label>
+          <select id="rapidFireTimePage">
+            <option value="5">5 seconds (Warm-up)</option>
+            <option value="4">4 seconds (Standard)</option>
+            <option value="3" selected>3 seconds (Challenging)</option>
+            <option value="2">2 seconds (Expert)</option>
+          </select>
+        </div>
+        <div class="rapid-fire-setting">
+          <label>Number of Rounds</label>
+          <select id="rapidFireRoundsPage">
+            <option value="5">5 rounds (Quick)</option>
+            <option value="10" selected>10 rounds (Standard)</option>
+            <option value="15">15 rounds (Extended)</option>
+            <option value="20">20 rounds (Marathon)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="rapid-fire-stats">
+        <div class="rapid-fire-stat">
+          <div class="rapid-fire-stat-value" id="rfTotalSessionsPage">0</div>
+          <div class="rapid-fire-stat-label">Sessions</div>
+        </div>
+        <div class="rapid-fire-stat">
+          <div class="rapid-fire-stat-value" id="rfTotalAnalogiesPage">0</div>
+          <div class="rapid-fire-stat-label">Analogies</div>
+        </div>
+        <div class="rapid-fire-stat">
+          <div class="rapid-fire-stat-value" id="rfFastestTimePage">--</div>
+          <div class="rapid-fire-stat-label">Fastest</div>
+        </div>
+      </div>
+
+      <!-- Coaching Cue -->
+      <div class="rapid-fire-cue" id="rapidFireCuePage">
+        "Speak before thinking. No wrong answers. Keep moving forward."
+      </div>
+
+      <!-- Game Area (shown during game) -->
+      <div id="rapidFireGamePage" style="display: none;">
+        <div class="rapid-fire-round-info" id="rapidFireRoundInfoPage">Round 1 of 10</div>
+
+        <div class="rapid-fire-sentence" id="rapidFireSentencePage">
+          A BATTERY IS LIKE A JACUZZI
+        </div>
+        <div class="rapid-fire-because">
+          BECAUSE...
+        </div>
+
+        <div class="rapid-fire-timer" id="rapidFireTimerPage">3</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="record-controls">
+        <button id="startRapidFireBtnPage" class="record-btn start">▶️ Start Session</button>
+        <button id="stopRapidFireBtnPage" class="record-btn stop" style="display: none;">⏹ End Session</button>
+      </div>
+    </div>
+  </div>
+  <!-- END RAPID FIRE PAGE -->
+
+  <!-- WARM UP PAGE -->
+  <div class="container page" id="warmUpPage">
+    <button class="back-btn" id="warmUpBackBtn">← Back to Home</button>
+    <h2 style="font-size: 24px; color: #facc15; margin-bottom: 20px; text-align: center;">🎤 Vocal Warm Up</h2>
+
+    <!-- Breathing Exercise with Animation -->
+    <div class="warmup-section">
+      <h3>🌬️ Deep Breathing</h3>
+
+      <!-- Breathing Animation Circle -->
+      <div class="breathing-container">
+        <div class="breathing-circle" id="breathingCircle">
+          <span class="breathing-text" id="breathingTimerDisplay">0:00</span>
+        </div>
+        <div class="breathing-phase" id="breathingPhase"></div>
+        <div class="breathing-instruction">
+          Inhale 4s → Hold 4s → Exhale 4s → Hold 4s<br>
+          <small style="color: #6b7280;">Follow the expanding and contracting circle</small>
+        </div>
+      </div>
+
+      <div class="warmup-exercise" style="text-align: center;">
+        <div class="warmup-timer" style="justify-content: center;">
+          <button class="warmup-timer-btn primary" id="startBreathingBtn" style="padding: 12px 28px; font-size: 15px;">▶️ Start Breathing</button>
+          <button class="warmup-timer-btn secondary" id="stopBreathingBtn" style="display: none; padding: 12px 28px; font-size: 15px;">⏹ Stop</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tongue Twisters -->
+    <div class="warmup-section">
+      <h3>👅 Tongue Twisters</h3>
+      <div class="tongue-twister-box">
+        <div class="tongue-twister-text" id="tongueTwisterText">She sells seashells by the seashore</div>
+        <button class="tongue-twister-btn secondary" id="nextTwisterBtn">Next Twister</button>
+      </div>
+      <div class="warmup-exercise">
+        <p>Say each tongue twister 3 times, getting faster each time. Focus on clear articulation.</p>
+      </div>
+    </div>
+
+    <!-- Lip Trills -->
+    <div class="warmup-section">
+      <h3>💋 Lip Trills</h3>
+      <div class="warmup-exercise">
+        <h4>Warm Up Your Voice</h4>
+        <p>Do lip trills (motor boat sound) up and down your vocal range for 30 seconds.</p>
+        <div class="warmup-timer">
+          <span class="warmup-timer-display" id="lipTrillTimer">0:30</span>
+          <button class="warmup-timer-btn primary" id="startLipTrillBtn">Start</button>
+          <button class="warmup-timer-btn secondary" id="stopLipTrillBtn" style="display: none;">Stop</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Humming -->
+    <div class="warmup-section">
+      <h3>🎵 Humming</h3>
+      <div class="warmup-exercise">
+        <h4>Resonance Exercise</h4>
+        <p>Hum at a comfortable pitch, feeling the vibration in your lips and nose. Do this for 30 seconds.</p>
+        <div class="warmup-timer">
+          <span class="warmup-timer-display" id="hummingTimer">0:30</span>
+          <button class="warmup-timer-btn primary" id="startHummingBtn">Start</button>
+          <button class="warmup-timer-btn secondary" id="stopHummingBtn" style="display: none;">Stop</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Articulation -->
+    <div class="warmup-section">
+      <h3>🗣️ Articulation Drills</h3>
+      <div class="warmup-exercise">
+        <h4>Over-Enunciate Practice</h4>
+        <p>Say "A-E-I-O-U" slowly, exaggerating each mouth shape. Then say "Red leather, yellow leather" 5 times.</p>
+      </div>
+    </div>
+  </div>
+  <!-- END WARM UP PAGE -->
+
+  <!-- SETTINGS PAGE -->
+  <div class="container page" id="settingsPage">
+    <button class="back-btn" id="settingsBackBtn">← Back to Home</button>
+    <h2 style="font-size: 24px; color: #facc15; margin-bottom: 20px; text-align: center;">⚙️ Settings</h2>
+
+    <!-- Daily Notifications Section -->
+    <div class="settings-section">
+      <h3>🔔 Daily Notifications</h3>
+      <div class="settings-row">
+        <span class="settings-row-label">Enable Reminders</span>
+        <label class="notification-toggle">
+          <input type="checkbox" id="notificationToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Reminder Time</span>
+        <input type="time" id="notificationTime" value="09:00" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #374151; background: #0f172a; color: #e5e7eb;">
+      </div>
+      <div class="notification-status" id="notificationStatus" style="margin-top: 12px;">
+        Enable notifications to get daily practice reminders
+      </div>
+    </div>
+
+    <!-- Sync Section -->
+    <div class="settings-section">
+      <h3>☁️ Cloud Sync</h3>
+      <div class="settings-row">
+        <span class="settings-row-label">Sync Status</span>
+        <span class="settings-row-value" id="settingsSyncStatus">Not signed in</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Last Sync</span>
+        <span class="settings-row-value" id="settingsLastSync">Never</span>
+      </div>
+      <button id="manualSyncBtn" class="primary" style="width: 100%; margin-top: 12px;">
+        🔄 Sync Now
+      </button>
+    </div>
+
+    <!-- Account Section -->
+    <div class="settings-section">
+      <h3>👤 Account</h3>
+      <div id="settingsSignedOut">
+        <p style="color: #9ca3af; font-size: 14px; margin-bottom: 12px;">Sign in to sync your data across devices</p>
+        <button class="profile-action-btn primary" id="settingsGoogleSignInBtn" style="width: 100%;">
+          <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            <path fill="none" d="M0 0h48v48H0z"/>
+          </svg>
+          Sign in with Google
+        </button>
+      </div>
+      <div id="settingsSignedIn" style="display: none;">
+        <div class="settings-row">
+          <span class="settings-row-label">Email</span>
+          <span class="settings-row-value" id="settingsUserEmail">user@example.com</span>
+        </div>
+        <button id="settingsSignOutBtn" class="secondary" style="width: 100%; margin-top: 12px;">
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="settings-section">
+      <h3>ℹ️ About</h3>
+      <div class="settings-row">
+        <span class="settings-row-label">Version</span>
+        <span class="settings-row-value" id="settingsAppVersion">Loading...</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Developer</span>
+        <span class="settings-row-value">MOUN Academy</span>
+      </div>
+    </div>
+  </div>
+  <!-- END SETTINGS PAGE -->
+
+  <!-- Rating Modal -->
+  <div class="rating-modal" id="ratingModal">
+    <div class="rating-content">
+      <div class="rating-title">How did that feel?</div>
+      <div class="rating-subtitle">Rate your confidence (1-5)</div>
+      <div class="rating-stars">
+        <button class="star" data-rating="1">1</button>
+        <button class="star" data-rating="2">2</button>
+        <button class="star" data-rating="3">3</button>
+        <button class="star" data-rating="4">4</button>
+        <button class="star" data-rating="5">5</button>
+      </div>
+      <button id="skipRating" class="secondary" style="width: 100%;">Skip</button>
+    </div>
+  </div>
+
+  <!-- Achievement Toast -->
+  <div class="achievement" id="achievement"></div>
+
+  <script>
+    // Word database
+    const words = [
+      { word: "Dream", definition: "A cherished aspiration or ideal" },
+      { word: "Focus", definition: "The center of interest or activity" },
+      { word: "Habit", definition: "A regular tendency or practice" },
+      { word: "Growth", definition: "The process of developing" },
+      { word: "Change", definition: "To make or become different" },
+      { word: "Kindness", definition: "Being friendly and considerate" },
+      { word: "Patience", definition: "Accepting delay without anger" },
+      { word: "Courage", definition: "Ability to face fear" },
+      { word: "Trust", definition: "Firm belief in reliability" },
+      { word: "Success", definition: "Accomplishment of an aim" },
+      { word: "Confidence", definition: "Feeling of self-assurance" },
+      { word: "Leadership", definition: "Action of leading a group" },
+      { word: "Goal", definition: "Object of ambition" },
+      { word: "Story", definition: "Account of events" },
+      { word: "Connection", definition: "Relationship between people" },
+      { word: "Challenge", definition: "Something that tests abilities" },
+      { word: "Learning", definition: "Acquiring knowledge or skills" },
+      { word: "Opportunity", definition: "Favorable situation" },
+      { word: "Choice", definition: "Selecting between alternatives" },
+      { word: "Action", definition: "Process of doing something" },
+      { word: "Fear", definition: "Emotion caused by threat" },
+      { word: "Joy", definition: "Feeling of great happiness" },
+      { word: "Peace", definition: "Freedom from disturbance" },
+      { word: "Purpose", definition: "Reason for existence" },
+      { word: "Energy", definition: "Strength for activity" },
+      { word: "Motivation", definition: "Reason for acting" },
+      { word: "Momentum", definition: "Force of movement" },
+      { word: "Passion", definition: "Strong emotion" },
+      { word: "Balance", definition: "State of equilibrium" },
+      { word: "Vision", definition: "Ability to imagine the future" },
+      { word: "Failure", definition: "Lack of success" },
+      { word: "Risk", definition: "Possibility of loss or danger" },
+      { word: "Gratitude", definition: "Being thankful" },
+      { word: "Honesty", definition: "Quality of being truthful" },
+      { word: "Respect", definition: "Admiration for someone" },
+      { word: "Creativity", definition: "Use of imagination" },
+      { word: "Discipline", definition: "Training to follow rules" },
+      { word: "Freedom", definition: "State of being free" },
+      { word: "Loyalty", definition: "Strong support or allegiance" },
+      { word: "Wisdom", definition: "Quality of having experience" },
+      { word: "Ambition", definition: "Strong desire to achieve" },
+      { word: "Persistence", definition: "Continuing despite difficulty" },
+      { word: "Empathy", definition: "Understanding others' feelings" },
+      { word: "Curiosity", definition: "Desire to learn or know" },
+      { word: "Simplicity", definition: "Quality of being easy" },
+      { word: "Silence", definition: "Complete absence of sound" },
+      { word: "Time", definition: "Ongoing sequence of events" },
+      { word: "Money", definition: "Medium of exchange" },
+      { word: "Health", definition: "State of being well" },
+      { word: "Family", definition: "Group of related people" }
+    ];
+
+    // IELTS Speaking Questions (50 questions from Parts 1, 2, and 3)
+    const ieltsQuestions = [
+      // PART 1 - Personal Questions (20 questions)
+      { part: 1, question: "What do you do for work or study?" },
+      { part: 1, question: "Tell me about your hometown. What do you like about it?" },
+      { part: 1, question: "What kind of accommodation do you live in?" },
+      { part: 1, question: "Do you have any hobbies? What equipment do you need for it?" },
+      { part: 1, question: "What's your favorite food? Have you always liked it?" },
+      { part: 1, question: "How do you usually spend your weekends?" },
+      { part: 1, question: "Do you prefer going out alone or with friends?" },
+      { part: 1, question: "What makes you happy?" },
+      { part: 1, question: "Tell me about your daily routine." },
+      { part: 1, question: "What are the different seasons like in your country?" },
+      { part: 1, question: "Do you like reading books? What kind?" },
+      { part: 1, question: "How important is your family to you?" },
+      { part: 1, question: "Do you enjoy cooking? What do you usually cook?" },
+      { part: 1, question: "What kind of music do you like?" },
+      { part: 1, question: "How do you usually travel to work or school?" },
+      { part: 1, question: "Do you like to stay up late or go to bed early?" },
+      { part: 1, question: "What did you enjoy doing as a child?" },
+      { part: 1, question: "Do you prefer hot or cold weather? Why?" },
+      { part: 1, question: "What do you usually do when you have free time?" },
+      { part: 1, question: "Tell me about your neighborhood." },
+
+      // PART 2 - 2-Minute Topics (20 questions)
+      { part: 2, question: "Describe a person who has inspired you.", subpoints: ["Who they are", "How you know them", "What they did to inspire you", "Explain why they inspired you"] },
+      { part: 2, question: "Describe a place you would like to visit.", subpoints: ["Where it is", "How you know about it", "What you would do there", "Explain why you want to visit it"] },
+      { part: 2, question: "Describe a memorable event from your childhood.", subpoints: ["What the event was", "When it happened", "Who was there", "Explain why it was memorable"] },
+      { part: 2, question: "Describe a skill you would like to learn.", subpoints: ["What the skill is", "Why you want to learn it", "How you would learn it", "Explain how it would benefit you"] },
+      { part: 2, question: "Describe a book or movie that made an impact on you.", subpoints: ["What it was about", "When you read/watched it", "Why it was significant", "Explain how it affected you"] },
+      { part: 2, question: "Describe a goal or ambition you have.", subpoints: ["What it is", "When you first had this goal", "What you're doing to achieve it", "Explain why it's important to you"] },
+      { part: 2, question: "Describe a gift you gave someone that they really liked.", subpoints: ["What it was", "Who you gave it to", "Why you chose it", "Explain their reaction"] },
+      { part: 2, question: "Describe a time when you helped someone.", subpoints: ["Who you helped", "What you did", "Why you helped them", "Explain how you felt about it"] },
+      { part: 2, question: "Describe a festival or celebration in your country.", subpoints: ["What it is", "When it happens", "What people do", "Explain why it's important"] },
+      { part: 2, question: "Describe a difficult decision you had to make.", subpoints: ["What the decision was", "When you made it", "What options you had", "Explain why it was difficult"] },
+      { part: 2, question: "Describe a photograph you really like.", subpoints: ["What's in the photo", "When it was taken", "Why you like it", "Explain what it means to you"] },
+      { part: 2, question: "Describe a time when you were really proud of yourself.", subpoints: ["What you accomplished", "When it happened", "How you felt", "Explain why you were proud"] },
+      { part: 2, question: "Describe your favorite place to relax.", subpoints: ["Where it is", "What it looks like", "What you do there", "Explain why it helps you relax"] },
+      { part: 2, question: "Describe an interesting animal you have seen.", subpoints: ["What it was", "Where you saw it", "What it was doing", "Explain why it was interesting"] },
+      { part: 2, question: "Describe a teacher who influenced you.", subpoints: ["Who they were", "What they taught", "How they influenced you", "Explain why they were important"] },
+      { part: 2, question: "Describe a small business you would like to start.", subpoints: ["What it would be", "Why you're interested in it", "What would be needed to start it", "Explain how it would help people"] },
+      { part: 2, question: "Describe a time when you had to be brave.", subpoints: ["What happened", "When it was", "How you felt", "Explain why you needed to be brave"] },
+      { part: 2, question: "Describe a piece of technology you find useful.", subpoints: ["What it is", "How you use it", "Why it's useful", "Explain how it makes your life easier"] },
+      { part: 2, question: "Describe a tradition in your family.", subpoints: ["What it is", "When it happens", "Who participates", "Explain why it's important to your family"] },
+      { part: 2, question: "Describe a beautiful place in your city.", subpoints: ["Where it is", "What it looks like", "What people do there", "Explain why you think it's beautiful"] },
+
+      // PART 3 - Discussion Questions (10 questions)
+      { part: 3, question: "How has technology changed the way people communicate in your country?" },
+      { part: 3, question: "Do you think it's important to preserve traditional customs? Why or why not?" },
+      { part: 3, question: "What are the advantages and disadvantages of living in a big city?" },
+      { part: 3, question: "How can education be improved in your country?" },
+      { part: 3, question: "Do you think people today have more stress than previous generations? Why?" },
+      { part: 3, question: "What role should governments play in protecting the environment?" },
+      { part: 3, question: "How has the internet affected the way young people learn?" },
+      { part: 3, question: "Do you think work-life balance is important? How can it be achieved?" },
+      { part: 3, question: "What are the benefits and drawbacks of globalization?" },
+      { part: 3, question: "How can communities support elderly people better?" }
+    ];
+
+    // Rapid Fire word list for analogies (150+ words with grammar metadata)
+    // Each word has: word, plural (true/false), article ('a', 'an', 'the', or null for no article)
+    const rapidFireWords = [
+      // Objects
+      { word: "BATTERY", plural: false, article: "A" },
+      { word: "FLASHLIGHT", plural: false, article: "A" },
+      { word: "HAMMER", plural: false, article: "A" },
+      { word: "SCREWDRIVER", plural: false, article: "A" },
+      { word: "PENCIL", plural: false, article: "A" },
+      { word: "ERASER", plural: false, article: "AN" },
+      { word: "SCISSORS", plural: true, article: null },
+      { word: "PAPERCLIP", plural: false, article: "A" },
+      { word: "STAPLER", plural: false, article: "A" },
+      { word: "MIRROR", plural: false, article: "A" },
+      { word: "CLOCK", plural: false, article: "A" },
+      { word: "LAMP", plural: false, article: "A" },
+      { word: "CHAIR", plural: false, article: "A" },
+      { word: "TABLE", plural: false, article: "A" },
+      { word: "PILLOW", plural: false, article: "A" },
+      { word: "BLANKET", plural: false, article: "A" },
+      { word: "UMBRELLA", plural: false, article: "AN" },
+      { word: "BACKPACK", plural: false, article: "A" },
+      { word: "WALLET", plural: false, article: "A" },
+      { word: "KEYS", plural: true, article: null },
+      { word: "PHONE", plural: false, article: "A" },
+      { word: "LAPTOP", plural: false, article: "A" },
+      { word: "CHARGER", plural: false, article: "A" },
+      { word: "HEADPHONES", plural: true, article: null },
+      { word: "CAMERA", plural: false, article: "A" },
+      { word: "MICROPHONE", plural: false, article: "A" },
+      { word: "SPEAKER", plural: false, article: "A" },
+      { word: "REMOTE", plural: false, article: "A" },
+      { word: "CALCULATOR", plural: false, article: "A" },
+      { word: "NOTEBOOK", plural: false, article: "A" },
+      { word: "CALENDAR", plural: false, article: "A" },
+      { word: "MAP", plural: false, article: "A" },
+      { word: "COMPASS", plural: false, article: "A" },
+      { word: "THERMOMETER", plural: false, article: "A" },
+      { word: "RULER", plural: false, article: "A" },
+      { word: "MAGNET", plural: false, article: "A" },
+      { word: "BRUSH", plural: false, article: "A" },
+      { word: "COMB", plural: false, article: "A" },
+      { word: "TOOTHBRUSH", plural: false, article: "A" },
+
+      // Animals
+      { word: "DOG", plural: false, article: "A" },
+      { word: "CAT", plural: false, article: "A" },
+      { word: "BIRD", plural: false, article: "A" },
+      { word: "HORSE", plural: false, article: "A" },
+      { word: "ELEPHANT", plural: false, article: "AN" },
+      { word: "LION", plural: false, article: "A" },
+      { word: "TIGER", plural: false, article: "A" },
+      { word: "BEAR", plural: false, article: "A" },
+      { word: "WOLF", plural: false, article: "A" },
+      { word: "FOX", plural: false, article: "A" },
+      { word: "RABBIT", plural: false, article: "A" },
+      { word: "SQUIRREL", plural: false, article: "A" },
+      { word: "DEER", plural: false, article: "A" },
+      { word: "DOLPHIN", plural: false, article: "A" },
+      { word: "WHALE", plural: false, article: "A" },
+      { word: "SHARK", plural: false, article: "A" },
+      { word: "EAGLE", plural: false, article: "AN" },
+      { word: "OWL", plural: false, article: "AN" },
+      { word: "PARROT", plural: false, article: "A" },
+      { word: "PENGUIN", plural: false, article: "A" },
+      { word: "BUTTERFLY", plural: false, article: "A" },
+      { word: "BEE", plural: false, article: "A" },
+      { word: "SPIDER", plural: false, article: "A" },
+      { word: "ANT", plural: false, article: "AN" },
+      { word: "SNAIL", plural: false, article: "A" },
+      { word: "FROG", plural: false, article: "A" },
+      { word: "TURTLE", plural: false, article: "A" },
+      { word: "SNAKE", plural: false, article: "A" },
+      { word: "LIZARD", plural: false, article: "A" },
+      { word: "MONKEY", plural: false, article: "A" },
+      { word: "GORILLA", plural: false, article: "A" },
+      { word: "GIRAFFE", plural: false, article: "A" },
+      { word: "ZEBRA", plural: false, article: "A" },
+      { word: "KANGAROO", plural: false, article: "A" },
+
+      // Nature
+      { word: "TREE", plural: false, article: "A" },
+      { word: "FLOWER", plural: false, article: "A" },
+      { word: "MOUNTAIN", plural: false, article: "A" },
+      { word: "RIVER", plural: false, article: "A" },
+      { word: "OCEAN", plural: false, article: "AN" },
+      { word: "LAKE", plural: false, article: "A" },
+      { word: "BEACH", plural: false, article: "A" },
+      { word: "DESERT", plural: false, article: "A" },
+      { word: "FOREST", plural: false, article: "A" },
+      { word: "GARDEN", plural: false, article: "A" },
+      { word: "CLOUD", plural: false, article: "A" },
+      { word: "RAINBOW", plural: false, article: "A" },
+      { word: "SUN", plural: false, article: "THE" },
+      { word: "MOON", plural: false, article: "THE" },
+      { word: "STAR", plural: false, article: "A" },
+      { word: "STONE", plural: false, article: "A" },
+      { word: "ROCK", plural: false, article: "A" },
+      { word: "SEED", plural: false, article: "A" },
+      { word: "ROOT", plural: false, article: "A" },
+      { word: "BRANCH", plural: false, article: "A" },
+      { word: "LEAF", plural: false, article: "A" },
+      { word: "SUNRISE", plural: false, article: "A" },
+      { word: "SUNSET", plural: false, article: "A" },
+      { word: "WAVE", plural: false, article: "A" },
+      { word: "WATERFALL", plural: false, article: "A" },
+      { word: "CANYON", plural: false, article: "A" },
+      { word: "VALLEY", plural: false, article: "A" },
+      { word: "ISLAND", plural: false, article: "AN" },
+      { word: "VOLCANO", plural: false, article: "A" },
+
+      // Technology
+      { word: "COMPUTER", plural: false, article: "A" },
+      { word: "KEYBOARD", plural: false, article: "A" },
+      { word: "MOUSE", plural: false, article: "A" },
+      { word: "MONITOR", plural: false, article: "A" },
+      { word: "PRINTER", plural: false, article: "A" },
+      { word: "SCANNER", plural: false, article: "A" },
+      { word: "ROUTER", plural: false, article: "A" },
+      { word: "ROBOT", plural: false, article: "A" },
+      { word: "DRONE", plural: false, article: "A" },
+      { word: "ENGINE", plural: false, article: "AN" },
+      { word: "MOTOR", plural: false, article: "A" },
+      { word: "WHEEL", plural: false, article: "A" },
+      { word: "GEAR", plural: false, article: "A" },
+      { word: "LEVER", plural: false, article: "A" },
+      { word: "BUTTON", plural: false, article: "A" },
+      { word: "SWITCH", plural: false, article: "A" },
+      { word: "SCREEN", plural: false, article: "A" },
+
+      // Food & Drinks
+      { word: "BREAD", plural: false, article: null },
+      { word: "BUTTER", plural: false, article: null },
+      { word: "CHEESE", plural: false, article: null },
+      { word: "MILK", plural: false, article: null },
+      { word: "COFFEE", plural: false, article: null },
+      { word: "TEA", plural: false, article: null },
+      { word: "WATER", plural: false, article: null },
+      { word: "JUICE", plural: false, article: null },
+      { word: "APPLE", plural: false, article: "AN" },
+      { word: "ORANGE", plural: false, article: "AN" },
+      { word: "BANANA", plural: false, article: "A" },
+      { word: "PIZZA", plural: false, article: "A" },
+      { word: "BURGER", plural: false, article: "A" },
+      { word: "SANDWICH", plural: false, article: "A" },
+      { word: "SALAD", plural: false, article: "A" },
+      { word: "COOKIE", plural: false, article: "A" },
+      { word: "CAKE", plural: false, article: "A" },
+      { word: "HONEY", plural: false, article: null },
+      { word: "SALT", plural: false, article: null },
+      { word: "PEPPER", plural: false, article: null },
+      { word: "SUGAR", plural: false, article: null },
+      { word: "EGG", plural: false, article: "AN" },
+      { word: "POTATO", plural: false, article: "A" },
+      { word: "TOMATO", plural: false, article: "A" },
+      { word: "CARROT", plural: false, article: "A" },
+
+      // Activities & Concepts
+      { word: "GAME", plural: false, article: "A" },
+      { word: "BOOK", plural: false, article: "A" },
+      { word: "STORY", plural: false, article: "A" },
+      { word: "MOVIE", plural: false, article: "A" },
+      { word: "PUZZLE", plural: false, article: "A" },
+      { word: "TOY", plural: false, article: "A" },
+      { word: "BALL", plural: false, article: "A" },
+      { word: "RACE", plural: false, article: "A" },
+      { word: "BRIDGE", plural: false, article: "A" },
+      { word: "ROAD", plural: false, article: "A" },
+      { word: "PATH", plural: false, article: "A" },
+      { word: "DOOR", plural: false, article: "A" },
+      { word: "WINDOW", plural: false, article: "A" },
+      { word: "WALL", plural: false, article: "A" },
+      { word: "ROOF", plural: false, article: "A" },
+      { word: "STAIRS", plural: true, article: null },
+      { word: "ELEVATOR", plural: false, article: "AN" },
+      { word: "TUNNEL", plural: false, article: "A" },
+      { word: "TOWER", plural: false, article: "A" },
+      { word: "CASTLE", plural: false, article: "A" },
+      { word: "PYRAMID", plural: false, article: "A" },
+      { word: "CIRCLE", plural: false, article: "A" },
+      { word: "SQUARE", plural: false, article: "A" },
+      { word: "VACATION", plural: false, article: "A" },
+      { word: "JOURNEY", plural: false, article: "A" },
+      { word: "ADVENTURE", plural: false, article: "AN" }
+    ];
+
+    // Coaching cues for Rapid Fire
+    const rapidFireCues = [
+      "Speak before thinking. No wrong answers.",
+      "Keep moving forward. Don't hesitate.",
+      "Your first thought is good enough.",
+      "Trust your instincts. Say it out loud.",
+      "No pausing. Just speak.",
+      "Every answer is the right answer.",
+      "Faster than your doubts. Go!",
+      "Don't overthink it. Just go.",
+      "Speed beats perfection here.",
+      "Your brain is faster than you think."
+    ];
+
+    // Structure templates
+    function getStructure(word, formula) {
+      const structures = {
+        'one-thing': `
+          <div class="structure-section">
+            <h4>1. POINT (10-15 seconds)</h4>
+            <strong>"The one thing about ${word.toLowerCase()} is..."</strong>
+            <div class="example-box">
+              • "The one thing about ${word.toLowerCase()} is that it's not what you think..."<br>
+              • "The one thing about ${word.toLowerCase()} is that everyone gets it wrong..."
+            </div>
+          </div>
+          <div class="structure-section">
+            <h4>2. STORY (60-90 seconds)</h4>
+            <strong>Prove it with a personal moment:</strong>
+            <em>→ Set the scene: "I was... / Last week..."</em>
+            <em>→ The conflict: "But then... / The problem was..."</em>
+            <em>→ The resolution: "So I... / That's when..."</em>
+          </div>
+          <div class="structure-section">
+            <h4>3. TAKEAWAY (10-15 seconds)</h4>
+            <strong>What should they remember?</strong>
+            <em>→ "So remember, ${word.toLowerCase()} is..."</em>
+            <em>→ "The next time you think about ${word.toLowerCase()}..."</em>
+          </div>
+        `,
+        'two-types': `
+          <div class="structure-section">
+            <h4>1. POINT (10-15 seconds)</h4>
+            <strong>"There are two types of ${word.toLowerCase()}..."</strong>
+            <div class="example-box">
+              • "There are two types of ${word.toLowerCase()} - the kind that helps and the kind that hurts..."<br>
+              • "There are two ways to think about ${word.toLowerCase()}..."
+            </div>
+          </div>
+          <div class="structure-section">
+            <h4>2. CONTRAST (60-90 seconds)</h4>
+            <strong>Show both types:</strong>
+            <em>→ Type 1: "The first type... For example..."</em>
+            <em>→ Type 2: "But the second type... In contrast..."</em>
+            <em>→ The insight: "The difference is..."</em>
+          </div>
+          <div class="structure-section">
+            <h4>3. TAKEAWAY (10-15 seconds)</h4>
+            <strong>Which type should they choose?</strong>
+            <em>→ "The question is: which type are you?"</em>
+            <em>→ "Choose the right type of ${word.toLowerCase()}, and..."</em>
+          </div>
+        `,
+        'three-steps': `
+          <div class="structure-section">
+            <h4>1. POINT (10-15 seconds)</h4>
+            <strong>"There are three steps to ${word.toLowerCase()}..."</strong>
+            <div class="example-box">
+              • "If you want real ${word.toLowerCase()}, follow these three steps..."<br>
+              • "I learned three steps to ${word.toLowerCase()} the hard way..."
+            </div>
+          </div>
+          <div class="structure-section">
+            <h4>2. THE STEPS (60-90 seconds)</h4>
+            <strong>Walk through each:</strong>
+            <em>→ "First, you must... This is crucial because..."</em>
+            <em>→ "Second, you need to... Without this..."</em>
+            <em>→ "Finally, you have to... This brings it together..."</em>
+          </div>
+          <div class="structure-section">
+            <h4>3. TAKEAWAY (10-15 seconds)</h4>
+            <strong>Why these steps matter:</strong>
+            <em>→ "Follow these three steps, and ${word.toLowerCase()} becomes..."</em>
+            <em>→ "Three steps - that's all it takes."</em>
+          </div>
+        `
+      };
+      return structures[formula];
+    }
+
+    // Version
+    const APP_VERSION = 'v3.0.0'; // Data Loss Fix - Firestore Source of Truth - January 11, 2026
+
+    // State
+    let stats = JSON.parse(localStorage.getItem('sgStats')) || {
+      todaySpeeches: 0, totalSpeeches: 0, streak: 0, ratings: [], weekHistory: {}, lastDate: null
+    };
+
+    let currentMode = 'timer';
+    let currentFormula = 'one-thing';
+    let currentWord = null;
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+    let isRunning = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let stream = null;
+    let isRequestingFeedback = false;
+    let recognition = null;
+    let recognitionActive = false;
+    let liveTranscript = '';
+    let currentAudioBlob = null;
+
+    // Prompt Mode state (Random Words vs IELTS)
+    let isIeltsMode = localStorage.getItem('promptMode') === 'ielts';
+    let currentIeltsQuestion = null;
+
+    // Rapid Fire state
+    let rapidFireStats = JSON.parse(localStorage.getItem('rapidFireStats')) || {
+      totalSessions: 0,
+      totalAnalogies: 0,
+      fastestTime: null
+    };
+    let rapidFireInterval = null;
+    let rapidFireTimeLeft = 0;
+    let rapidFireCurrentRound = 0;
+    let rapidFireTotalRounds = 10;
+    let rapidFireTimePerRound = 3;
+    let rapidFireSessionStart = null;
+    let rapidFireIsActive = false;
+
+    // AI Feedback Settings
+    let aiEnabled = localStorage.getItem('aiEnabled') !== 'false'; // Default ON
+
+    // Elements
+    const wordEl = document.getElementById('word');
+    const definitionEl = document.getElementById('definition');
+    const wordBox = document.getElementById('wordBox');
+    const timerCircle = document.getElementById('timerCircle');
+    const structureBox = document.getElementById('structureBox');
+    const structureContent = document.getElementById('structureContent');
+    const nudgeBanner = document.getElementById('nudgeBanner');
+    const achievement = document.getElementById('achievement');
+    const ratingModal = document.getElementById('ratingModal');
+    const aiFeedback = document.getElementById('aiFeedback');
+    const aiStatus = document.getElementById('aiStatus');
+    const manualTranscript = document.getElementById('manualTranscript');
+
+    // IELTS Elements
+    const ieltsQuestionEl = document.getElementById('ieltsQuestion');
+    const ieltsQuestionText = document.getElementById('ieltsQuestionText');
+    const ieltsBadge = document.getElementById('ieltsBadge');
+    const ieltsSubpoints = document.getElementById('ieltsSubpoints');
+    const randomWordsBtn = document.getElementById('randomWordsBtn');
+    const ieltsBtn = document.getElementById('ieltsBtn');
+    const newWordBtn = document.getElementById('newWordBtn');
+
+    // Initialize
+    function init() {
+      checkNewDay();
+      updateStats();
+      updateWeekCalendar();
+      updateNudge();
+      initSpeechRecognition();
+      initAIToggle();
+      initPromptModeToggle();
+      setAiStatus('Waiting for your next recording.');
+      manualTranscript.value = '';
+      updateVersionDisplay();
+    }
+
+    // Prompt Mode Toggle (Random Words vs IELTS)
+    function initPromptModeToggle() {
+      // Set initial UI state
+      updatePromptModeUI();
+
+      // Toggle event listeners
+      randomWordsBtn.addEventListener('click', () => {
+        if (!isIeltsMode) return;
+        isIeltsMode = false;
+        localStorage.setItem('promptMode', 'words');
+        updatePromptModeUI();
+        resetPrompt();
+      });
+
+      ieltsBtn.addEventListener('click', () => {
+        if (isIeltsMode) return;
+        isIeltsMode = true;
+        localStorage.setItem('promptMode', 'ielts');
+        updatePromptModeUI();
+        resetPrompt();
+      });
+    }
+
+    function updatePromptModeUI() {
+      // Update toggle buttons
+      randomWordsBtn.classList.toggle('active', !isIeltsMode);
+      ieltsBtn.classList.toggle('active', isIeltsMode);
+
+      // Update word box class
+      wordBox.classList.toggle('ielts-mode', isIeltsMode);
+
+      // Show/hide appropriate content
+      if (isIeltsMode) {
+        ieltsQuestionEl.classList.add('show');
+        newWordBtn.textContent = 'New Question';
+      } else {
+        ieltsQuestionEl.classList.remove('show');
+        newWordBtn.textContent = 'New Word';
+      }
+    }
+
+    function resetPrompt() {
+      reset();
+      currentWord = null;
+      currentIeltsQuestion = null;
+      wordEl.textContent = 'Ready?';
+      definitionEl.textContent = isIeltsMode ? 'Click "New Question" to get started' : 'Click "New Word" to get started';
+      ieltsQuestionText.textContent = isIeltsMode ? 'Click "New Question" to get an IELTS speaking question' : '';
+      ieltsSubpoints.style.display = 'none';
+      ieltsSubpoints.innerHTML = '';
+      ieltsBadge.textContent = 'Part 1';
+      ieltsBadge.className = 'ielts-part-badge part1';
+      structureBox.style.display = 'none';
+    }
+
+    function newIeltsQuestion() {
+      reset();
+      currentIeltsQuestion = ieltsQuestions[Math.floor(Math.random() * ieltsQuestions.length)];
+
+      // Update badge
+      ieltsBadge.textContent = `Part ${currentIeltsQuestion.part}`;
+      ieltsBadge.className = `ielts-part-badge part${currentIeltsQuestion.part}`;
+
+      // Update question text
+      ieltsQuestionText.textContent = currentIeltsQuestion.question;
+      ieltsQuestionText.classList.toggle('part2', currentIeltsQuestion.part === 2);
+
+      // Handle subpoints for Part 2
+      if (currentIeltsQuestion.subpoints && currentIeltsQuestion.subpoints.length > 0) {
+        ieltsSubpoints.innerHTML = currentIeltsQuestion.subpoints.map(sp => `<li>${sp}</li>`).join('');
+        ieltsSubpoints.style.display = 'block';
+      } else {
+        ieltsSubpoints.style.display = 'none';
+        ieltsSubpoints.innerHTML = '';
+      }
+
+      // Set currentWord for compatibility with feedback system
+      currentWord = {
+        word: `IELTS Part ${currentIeltsQuestion.part}`,
+        definition: currentIeltsQuestion.question
+      };
+
+      structureBox.style.display = 'none';
+    }
+
+    function initAIToggle() {
+      const toggle = document.getElementById('aiToggle');
+      const helper = document.getElementById('aiToggleHelper');
+
+      // Set initial state
+      toggle.checked = aiEnabled;
+      updateAIToggleUI();
+
+      // Handle toggle changes
+      toggle.addEventListener('change', () => {
+        aiEnabled = toggle.checked;
+        localStorage.setItem('aiEnabled', aiEnabled);
+        updateAIToggleUI();
+
+        if (aiEnabled) {
+          showAchievement('✨ AI feedback enabled');
+        } else {
+          showAchievement('💾 AI feedback disabled - transcription only');
+        }
+      });
+    }
+
+    function updateAIToggleUI() {
+      const helper = document.getElementById('aiToggleHelper');
+      if (aiEnabled) {
+        helper.textContent = 'Get personalized feedback on your pace, pauses, and delivery.';
+        setAiStatus('AI feedback enabled. Ready for your next recording.');
+      } else {
+        helper.textContent = 'Transcript only mode. Toggle on for coaching feedback.';
+        setAiStatus('AI feedback disabled. Will show transcript only.');
+      }
+    }
+
+    function updateVersionDisplay() {
+      const versionEl = document.getElementById('appVersion');
+      if (versionEl) {
+        versionEl.textContent = `Version ${APP_VERSION}`;
+      }
+    }
+
+    function checkNewDay() {
+      const today = new Date().toDateString();
+      if (stats.lastDate !== today) {
+        if (stats.lastDate) {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          if (stats.lastDate === yesterday.toDateString() && stats.todaySpeeches > 0) stats.streak++;
+          else if (stats.todaySpeeches === 0) stats.streak = 0;
+        }
+        stats.todaySpeeches = 0;
+        stats.lastDate = today;
+        saveStats();
+      }
+    }
+
+    function saveStats() { localStorage.setItem('sgStats', JSON.stringify(stats)); }
+
+    function updateStats() {
+      document.getElementById('speechCount').textContent = stats.todaySpeeches;
+      document.getElementById('streak').textContent = stats.streak;
+      document.getElementById('totalSpeeches').textContent = stats.totalSpeeches;
+      const avg = stats.ratings.length ? (stats.ratings.reduce((a,b) => a+b, 0) / stats.ratings.length).toFixed(1) : '-';
+      document.getElementById('avgRating').textContent = avg;
+    }
+
+    function updateWeekCalendar() {
+      const cal = document.getElementById('weekCalendar');
+      cal.innerHTML = '';
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const today = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toDateString();
+        const isToday = i === 0;
+        const completed = stats.weekHistory[key] || (isToday && stats.todaySpeeches > 0);
+        cal.innerHTML += `
+          <div class="day-dot">
+            <span class="day-label">${days[d.getDay()]}</span>
+            <div class="day-circle ${completed ? 'completed' : ''} ${isToday ? 'today' : ''}">${completed ? '✓' : d.getDate()}</div>
+          </div>`;
+      }
+    }
+
+    function updateNudge() {
+      if (stats.todaySpeeches === 0) { nudgeBanner.textContent = "🎯 Complete your first speech today!"; nudgeBanner.classList.add('show'); }
+      else if (stats.todaySpeeches === 2) { nudgeBanner.textContent = "🔥 One more to hit 3 today!"; nudgeBanner.classList.add('show'); }
+      else nudgeBanner.classList.remove('show');
+    }
+
+    function showAchievement(text) {
+      achievement.textContent = text;
+      achievement.classList.add('show');
+      setTimeout(() => achievement.classList.remove('show'), 3000);
+    }
+
+    function formatTime(sec) { return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+
+    function updateStructure() {
+      if (currentWord) structureContent.innerHTML = getStructure(currentWord.word, currentFormula);
+    }
+
+    function newWord() {
+      // Check if in IELTS mode
+      if (isIeltsMode) {
+        newIeltsQuestion();
+        return;
+      }
+
+      reset();
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      wordEl.textContent = currentWord.word;
+      definitionEl.textContent = currentWord.definition;
+      updateStructure();
+      structureBox.style.display = 'none';
+      document.getElementById('toggleStructureBtn').textContent = 'Show Structure Guide';
+    }
+
+    function startTimer() {
+      if (!currentWord || isRunning) {
+        if (!currentWord) showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!");
+        return;
+      }
+      isRunning = true;
+      wordBox.classList.add('active');
+      document.getElementById('startTimerBtn').style.display = 'none';
+      document.getElementById('stopTimerBtn').style.display = 'block';
+      timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        updateTimerDisplay();
+        if (elapsedSeconds >= 150) stopTimer(true);
+      }, 1000);
+    }
+
+    function stopTimer(auto = false) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      wordBox.classList.remove('active');
+      document.getElementById('startTimerBtn').style.display = 'block';
+      document.getElementById('stopTimerBtn').style.display = 'none';
+      if (elapsedSeconds >= 30) showRatingModal();
+    }
+
+    function reset() {
+      clearInterval(timerInterval);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      isRunning = false;
+      elapsedSeconds = 0;
+      currentAudioBlob = null;
+      updateTimerDisplay();
+      wordBox.classList.remove('active');
+      timerCircle.classList.remove('warning', 'danger');
+      document.getElementById('audioDownload').classList.remove('show');
+      document.getElementById('videoDownload').classList.remove('show');
+      document.getElementById('audioVisualizer').classList.remove('recording');
+      document.getElementById('videoTimer').style.display = 'none';
+
+      // Reset all buttons
+      document.getElementById('startTimerBtn').style.display = 'block';
+      document.getElementById('stopTimerBtn').style.display = 'none';
+      document.getElementById('startAudioBtn').style.display = 'block';
+      document.getElementById('stopAudioBtn').style.display = 'none';
+      document.getElementById('startVideoBtn').style.display = 'block';
+      document.getElementById('stopVideoBtn').style.display = 'none';
+    }
+
+    function setAiStatus(text, isError = false) {
+      aiStatus.textContent = text;
+      aiStatus.classList.toggle('error', isError);
+    }
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        setAiStatus('Live transcription unavailable on this browser. Paste your transcript to get feedback.', true);
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript + ' ';
+        }
+        liveTranscript = transcript.trim();
+        manualTranscript.value = liveTranscript;
+      };
+
+      recognition.onerror = () => {
+        setAiStatus('Live transcription unavailable. Paste your transcript to get feedback.', true);
+      };
+
+      recognition.onend = () => {
+        recognitionActive = false;
+        if (liveTranscript) setAiStatus('Transcript captured. Generating feedback soon.');
+      };
+    }
+
+    function startTranscriptionCapture() {
+      if (!recognition || recognitionActive) return;
+      liveTranscript = '';
+      try {
+        recognition.start();
+        recognitionActive = true;
+        setAiStatus('Listening and transcribing...');
+      } catch (err) {
+        console.error('Could not start recognition:', err);
+      }
+    }
+
+    function stopTranscriptionCapture() {
+      if (recognition && recognitionActive) {
+        recognition.stop();
+      }
+    }
+
+    function getTranscriptForFeedback() {
+      const text = (manualTranscript.value || liveTranscript || '').trim();
+      if (!text) return '';
+      let header = '';
+      if (isIeltsMode && currentIeltsQuestion) {
+        header = `IELTS Part ${currentIeltsQuestion.part} Question: ${currentIeltsQuestion.question}\n`;
+      } else if (currentWord) {
+        header = `Word prompt: ${currentWord.word}\n`;
+      }
+      const duration = elapsedSeconds ? `Duration: ${formatTime(elapsedSeconds)}\n` : '';
+      return `${header}${duration}Transcript: ${text}`.trim();
+    }
+
+    async function requestFeedbackWithAudio(audioBlob, duration) {
+      console.log('[DEBUG] requestFeedbackWithAudio called');
+      console.log('[DEBUG] Audio blob:', audioBlob ? `${audioBlob.size} bytes, type: ${audioBlob.type}` : 'null');
+      console.log('[DEBUG] Duration:', duration);
+      console.log('[DEBUG] AI enabled:', aiEnabled);
+
+      if (!audioBlob) {
+        console.error('[ERROR] No audio blob provided');
+        setAiStatus('No audio recording available.', true);
+        return;
+      }
+
+      // If AI is disabled, just show transcript without analysis
+      if (!aiEnabled) {
+        console.log('[INFO] AI feedback disabled, skipping analysis');
+        setAiStatus('Recording saved. AI feedback is disabled (transcript only).');
+        aiFeedback.textContent = 'AI feedback is disabled. Toggle it ON above to get detailed speech analysis.\n\nYour recording has been saved and you can download it below.';
+
+        // Still show rating modal to complete the speech and update stats
+        if (duration >= 30) {
+          showRatingModal();
+        }
+        return;
+      }
+
+      if (isRequestingFeedback) {
+        console.log('[WARN] Already requesting feedback, skipping');
+        return;
+      }
+
+      isRequestingFeedback = true;
+      setAiStatus('Analyzing your speech with AI (transcription + vocal analysis)...');
+      console.log('[INFO] Starting AI analysis...');
+
+      try {
+        // Create form data with audio file
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'speech.webm');
+        formData.append('duration', duration.toString());
+        console.log('[INFO] Sending request to /api/feedback');
+
+        const feedbackRes = await fetch('/api/feedback', {
+          method: 'POST',
+          body: formData
+        });
+
+        console.log('[INFO] Response status:', feedbackRes.status);
+
+        if (!feedbackRes.ok) {
+          const errorText = await feedbackRes.text();
+          console.error('[ERROR] API response not OK:', errorText);
+          throw new Error(`Feedback generation failed: ${feedbackRes.status}`);
+        }
+
+        const feedbackData = await feedbackRes.json();
+        console.log('[INFO] Feedback data received:', feedbackData);
+
+        const feedbackText = feedbackData.feedback?.trim() || 'No feedback generated.';
+        const transcript = feedbackData.transcript || '';
+        const metrics = feedbackData.metrics || {};
+
+        console.log('[INFO] Transcript length:', transcript.length);
+        console.log('[INFO] Metrics:', metrics);
+
+        // Update UI with transcript
+        if (transcript) {
+          manualTranscript.value = transcript;
+          console.log('[INFO] Transcript updated in UI');
+        } else {
+          console.warn('[WARN] No transcript in response');
+        }
+
+        // Display feedback with metrics
+        let displayText = feedbackText;
+        if (metrics.wordsPerMinute) {
+          displayText = `📊 Speech Metrics:\n` +
+            `• Pace: ${metrics.wordsPerMinute} WPM (${metrics.pacingVariation})\n` +
+            `• Pauses: ${metrics.pauseCount} pauses (avg ${metrics.averagePauseDuration}s)\n` +
+            `• Filler words: ${metrics.fillerWordCount}\n\n` +
+            displayText;
+        }
+
+        aiFeedback.textContent = displayText;
+        setAiStatus('AI analysis complete!');
+        console.log('[SUCCESS] AI analysis complete');
+
+        // Show rating modal to complete the speech and update stats
+        if (duration >= 30) {
+          showRatingModal();
+        }
+      } catch (err) {
+        console.error('[ERROR] Failed to get feedback:', err);
+        console.error('[ERROR] Error details:', err.message, err.stack);
+        setAiStatus(`Unable to analyze audio: ${err.message}. Check console for details.`, true);
+
+        // Even if feedback fails, still show rating modal to update stats
+        if (duration >= 30) {
+          showRatingModal();
+        }
+      } finally {
+        isRequestingFeedback = false;
+      }
+    }
+
+    async function requestFeedback(transcript) {
+      // Fallback for manual text input
+      const trimmed = (transcript || '').trim();
+      if (!trimmed) { setAiStatus('Add a transcript to get AI feedback.', true); return; }
+      if (isRequestingFeedback) return;
+      isRequestingFeedback = true;
+      setAiStatus('Requesting AI feedback...');
+
+      try {
+        const feedbackRes = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: trimmed })
+        });
+
+        if (!feedbackRes.ok) throw new Error('Feedback generation failed');
+        const feedbackData = await feedbackRes.json();
+        const feedbackText = feedbackData.feedback?.trim() || 'No feedback generated.';
+
+        aiFeedback.textContent = feedbackText;
+        setAiStatus('Feedback ready!');
+      } catch (err) {
+        console.error(err);
+        setAiStatus('Unable to fetch feedback right now.', true);
+      } finally {
+        isRequestingFeedback = false;
+      }
+    }
+
+    function updateTimerDisplay() {
+      const time = formatTime(elapsedSeconds);
+      timerCircle.textContent = time;
+      document.getElementById('audioTimer').textContent = time;
+      document.getElementById('videoTimerDisplay').textContent = time;
+      timerCircle.classList.remove('warning', 'danger');
+      if (elapsedSeconds >= 90) timerCircle.classList.add('danger');
+      else if (elapsedSeconds >= 60) timerCircle.classList.add('warning');
+    }
+
+    function showRatingModal() { ratingModal.classList.add('show'); }
+
+    function submitRating(rating) {
+      ratingModal.classList.remove('show');
+      if (rating) stats.ratings.push(rating);
+      completeSpeech();
+    }
+
+    function completeSpeech() {
+      stats.todaySpeeches++;
+      stats.totalSpeeches++;
+      stats.weekHistory[new Date().toDateString()] = true;
+      saveStats();
+      updateStats();
+      updateWeekCalendar();
+      updateNudge();
+      if (stats.todaySpeeches === 1) showAchievement("🎯 First speech of the day!");
+      else if (stats.todaySpeeches === 3) showAchievement("🔥 3 speeches! On fire!");
+    }
+
+    // Mode switching (Timer, Audio, Video only - Rapid Fire is now a separate page)
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('timerSection').style.display = 'none';
+      document.getElementById('audioSection').classList.remove('active');
+      document.getElementById('cameraSection').classList.remove('active');
+      stopMedia();
+
+      if (mode === 'timer') {
+        document.getElementById('timerOnlyBtn').classList.add('active');
+        document.getElementById('timerSection').style.display = 'flex';
+      } else if (mode === 'audio') {
+        document.getElementById('audioBtn').classList.add('active');
+        document.getElementById('audioSection').classList.add('active');
+        initAudio();
+      } else {
+        document.getElementById('cameraBtn').classList.add('active');
+        document.getElementById('cameraSection').classList.add('active');
+        initCamera();
+      }
+      reset();
+    }
+
+    async function initCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: "user" }, 
+          audio: true 
+        });
+        document.getElementById('videoElement').srcObject = stream;
+      } catch (e) { showAchievement("⚠️ Camera access denied"); setMode('timer'); }
+    }
+
+    async function initAudio() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (e) { showAchievement("⚠️ Mic access denied"); setMode('timer'); }
+    }
+
+    function stopMedia() {
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    }
+
+    function startAudioRecording() {
+      if (!currentWord) { showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!"); return; }
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        currentAudioBlob = blob;
+        document.getElementById('audioDownloadLink').href = URL.createObjectURL(blob);
+        document.getElementById('audioDownload').classList.add('show');
+
+        // Send audio to API for Whisper transcription + analysis
+        requestFeedbackWithAudio(blob, elapsedSeconds);
+      };
+      mediaRecorder.start();
+      document.getElementById('audioVisualizer').classList.add('recording');
+      document.getElementById('startAudioBtn').style.display = 'none';
+      document.getElementById('stopAudioBtn').style.display = 'block';
+      setAiStatus('Recording audio... Will analyze with AI when done.');
+      isRunning = true;
+      wordBox.classList.add('active');
+      timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        updateTimerDisplay();
+        if (elapsedSeconds >= 150) stopAudioRecording();
+      }, 1000);
+    }
+
+    function stopAudioRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      clearInterval(timerInterval);
+      isRunning = false;
+      wordBox.classList.remove('active');
+      document.getElementById('audioVisualizer').classList.remove('recording');
+      document.getElementById('startAudioBtn').style.display = 'block';
+      document.getElementById('stopAudioBtn').style.display = 'none';
+      // Don't show rating modal here - wait for AI feedback to complete first
+      // Rating modal will be shown in requestFeedbackWithAudio() after analysis
+    }
+
+    function startVideoRecording() {
+      if (!currentWord) { showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!"); return; }
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        currentAudioBlob = blob;
+        document.getElementById('videoDownloadLink').href = URL.createObjectURL(blob);
+        document.getElementById('videoDownload').classList.add('show');
+
+        // Send audio track to API for Whisper transcription + analysis
+        // Note: We send the whole video blob, backend will extract audio
+        requestFeedbackWithAudio(blob, elapsedSeconds);
+      };
+      mediaRecorder.start();
+      document.getElementById('videoTimer').style.display = 'block';
+      document.getElementById('startVideoBtn').style.display = 'none';
+      document.getElementById('stopVideoBtn').style.display = 'block';
+      setAiStatus('Recording video... Will analyze audio with AI when done.');
+      isRunning = true;
+      wordBox.classList.add('active');
+      timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        updateTimerDisplay();
+        if (elapsedSeconds >= 150) stopVideoRecording();
+      }, 1000);
+    }
+
+    function stopVideoRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      clearInterval(timerInterval);
+      isRunning = false;
+      wordBox.classList.remove('active');
+      document.getElementById('videoTimer').style.display = 'none';
+      document.getElementById('startVideoBtn').style.display = 'block';
+      document.getElementById('stopVideoBtn').style.display = 'none';
+      // Don't show rating modal here - wait for AI feedback to complete first
+      // Rating modal will be shown in requestFeedbackWithAudio() after analysis
+    }
+
+    // ========== RAPID FIRE FUNCTIONS ==========
+    // Note: Main rapid fire functionality is now on the dedicated Rapid Fire page.
+    // These functions are kept for compatibility but may reference non-existent elements.
+
+    function updateRapidFireStats() {
+      // Old embedded section elements may not exist - check first
+      const sessionsEl = document.getElementById('rfTotalSessions');
+      const analogiesEl = document.getElementById('rfTotalAnalogies');
+      const fastestEl = document.getElementById('rfFastestTime');
+
+      if (sessionsEl) sessionsEl.textContent = rapidFireStats.totalSessions;
+      if (analogiesEl) analogiesEl.textContent = rapidFireStats.totalAnalogies;
+      if (fastestEl) {
+        fastestEl.textContent = rapidFireStats.fastestTime ? rapidFireStats.fastestTime + 's' : '--';
+      }
+    }
+
+    function saveRapidFireStats() {
+      localStorage.setItem('rapidFireStats', JSON.stringify(rapidFireStats));
+      // Don't call updateRapidFireStats() here - page version handles its own updates
+    }
+
+    function updateRapidFireCue() {
+      // Old embedded section element may not exist - check first
+      const cueEl = document.getElementById('rapidFireCue');
+      if (cueEl) {
+        const randomCue = rapidFireCues[Math.floor(Math.random() * rapidFireCues.length)];
+        cueEl.textContent = `"${randomCue}"`;
+      }
+    }
+
+    function getRandomWords() {
+      const used = new Set();
+      const word1Index = Math.floor(Math.random() * rapidFireWords.length);
+      used.add(word1Index);
+
+      let word2Index;
+      do {
+        word2Index = Math.floor(Math.random() * rapidFireWords.length);
+      } while (used.has(word2Index));
+
+      const word1Obj = rapidFireWords[word1Index];
+      const word2Obj = rapidFireWords[word2Index];
+
+      // Build grammatically correct sentence: "[ARTICLE] WORD1 [IS/ARE] LIKE [ARTICLE] WORD2"
+      let sentence = "";
+
+      // First word with article
+      if (word1Obj.article) {
+        sentence += word1Obj.article + " ";
+      }
+      sentence += word1Obj.word;
+
+      // Verb (is/are)
+      sentence += word1Obj.plural ? " ARE LIKE " : " IS LIKE ";
+
+      // Second word with article
+      if (word2Obj.article) {
+        sentence += word2Obj.article + " ";
+      }
+      sentence += word2Obj.word;
+
+      return sentence;
+    }
+
+    function startRapidFire() {
+      // Get settings
+      rapidFireTimePerRound = parseInt(document.getElementById('rapidFireTime').value);
+      rapidFireTotalRounds = parseInt(document.getElementById('rapidFireRounds').value);
+
+      // Initialize session
+      rapidFireCurrentRound = 1;
+      rapidFireIsActive = true;
+      rapidFireSessionStart = Date.now();
+
+      // Hide settings, show game
+      document.getElementById('rapidFireSettings').style.display = 'none';
+      document.getElementById('rapidFireGame').style.display = 'block';
+
+      // Update buttons
+      document.getElementById('startRapidFireBtn').style.display = 'none';
+      document.getElementById('stopRapidFireBtn').style.display = 'inline-block';
+
+      // Start first round
+      startRapidFireRound();
+    }
+
+    function startRapidFireRound() {
+      if (!rapidFireIsActive) return;
+
+      // Generate grammatically correct sentence
+      const sentence = getRandomWords();
+      document.getElementById('rapidFireSentence').textContent = sentence;
+
+      // Update round info
+      document.getElementById('rapidFireRoundInfo').textContent =
+        `Round ${rapidFireCurrentRound} of ${rapidFireTotalRounds}`;
+
+      // Reset timer
+      rapidFireTimeLeft = rapidFireTimePerRound;
+      updateRapidFireTimer();
+
+      // Start countdown
+      rapidFireInterval = setInterval(() => {
+        rapidFireTimeLeft--;
+        updateRapidFireTimer();
+
+        if (rapidFireTimeLeft <= 0) {
+          clearInterval(rapidFireInterval);
+          nextRapidFireRound();
+        }
+      }, 1000);
+    }
+
+    function updateRapidFireTimer() {
+      const timerEl = document.getElementById('rapidFireTimer');
+      timerEl.textContent = rapidFireTimeLeft;
+
+      // Update colors based on time left
+      timerEl.classList.remove('warning', 'danger');
+
+      const percentLeft = rapidFireTimeLeft / rapidFireTimePerRound;
+      if (percentLeft <= 0.33) {
+        timerEl.classList.add('danger');
+      } else if (percentLeft <= 0.66) {
+        timerEl.classList.add('warning');
+      }
+    }
+
+    function nextRapidFireRound() {
+      rapidFireCurrentRound++;
+
+      if (rapidFireCurrentRound <= rapidFireTotalRounds) {
+        // Continue to next round
+        setTimeout(() => startRapidFireRound(), 300);
+      } else {
+        // Session complete
+        completeRapidFireSession();
+      }
+    }
+
+    function completeRapidFireSession() {
+      rapidFireIsActive = false;
+
+      // Calculate session time
+      const sessionDuration = Math.floor((Date.now() - rapidFireSessionStart) / 1000);
+
+      // Update stats
+      rapidFireStats.totalSessions++;
+      rapidFireStats.totalAnalogies += rapidFireTotalRounds;
+
+      // Update fastest time
+      if (!rapidFireStats.fastestTime || sessionDuration < rapidFireStats.fastestTime) {
+        rapidFireStats.fastestTime = sessionDuration;
+      }
+
+      saveRapidFireStats();
+
+      // Show completion message
+      showAchievement(`⚡ Session complete! ${rapidFireTotalRounds} analogies in ${sessionDuration}s`);
+
+      // Reset UI
+      resetRapidFireUI();
+    }
+
+    function stopRapidFire() {
+      if (rapidFireInterval) {
+        clearInterval(rapidFireInterval);
+        rapidFireInterval = null;
+      }
+      rapidFireIsActive = false;
+      resetRapidFireUI();
+    }
+
+    function resetRapidFireUI() {
+      // Clear interval if exists
+      if (rapidFireInterval) {
+        clearInterval(rapidFireInterval);
+        rapidFireInterval = null;
+      }
+
+      // Reset state
+      rapidFireIsActive = false;
+      rapidFireCurrentRound = 0;
+
+      // Old embedded section elements may not exist - check first
+      const settingsEl = document.getElementById('rapidFireSettings');
+      const gameEl = document.getElementById('rapidFireGame');
+      const startBtn = document.getElementById('startRapidFireBtn');
+      const stopBtn = document.getElementById('stopRapidFireBtn');
+
+      if (settingsEl) settingsEl.style.display = 'block';
+      if (gameEl) gameEl.style.display = 'none';
+      if (startBtn) startBtn.style.display = 'inline-block';
+      if (stopBtn) stopBtn.style.display = 'none';
+
+      // Update cue
+      updateRapidFireCue();
+    }
+
+    // Event listeners
+    document.getElementById('newWordBtn').addEventListener('click', newWord);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+    document.getElementById('timerOnlyBtn').addEventListener('click', () => setMode('timer'));
+    document.getElementById('audioBtn').addEventListener('click', () => setMode('audio'));
+    document.getElementById('cameraBtn').addEventListener('click', () => setMode('video'));
+    document.getElementById('skipRating').addEventListener('click', () => submitRating(null));
+
+    document.getElementById('startTimerBtn').addEventListener('click', startTimer);
+    document.getElementById('stopTimerBtn').addEventListener('click', () => stopTimer());
+    document.getElementById('startAudioBtn').addEventListener('click', startAudioRecording);
+    document.getElementById('stopAudioBtn').addEventListener('click', stopAudioRecording);
+    document.getElementById('startVideoBtn').addEventListener('click', startVideoRecording);
+    document.getElementById('stopVideoBtn').addEventListener('click', stopVideoRecording);
+
+    document.getElementById('toggleStructureBtn').addEventListener('click', () => {
+      if (!currentWord) {
+        showAchievement(isIeltsMode ? "📝 Get a question first!" : "📝 Generate a word first!");
+        return;
+      }
+      const toggleBtn = document.getElementById('toggleStructureBtn');
+      if (structureBox.style.display === 'none' || structureBox.style.display === '') {
+        structureBox.style.display = 'block';
+        toggleBtn.innerHTML = '<span class="btn-icon">📋</span><span>Hide Guide</span>';
+        toggleBtn.classList.add('active');
+      } else {
+        structureBox.style.display = 'none';
+        toggleBtn.innerHTML = '<span class="btn-icon">✨</span><span>Structure Guide</span>';
+        toggleBtn.classList.remove('active');
+      }
+    });
+
+    document.querySelectorAll('.formula-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.formula-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFormula = btn.dataset.formula;
+        updateStructure();
+      });
+    });
+
+    document.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', () => {
+        document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+        star.classList.add('selected');
+        setTimeout(() => submitRating(parseInt(star.dataset.rating)), 300);
+      });
+    });
+
+    // ===== NOTIFICATION SYSTEM WITH INDEXEDDB =====
+    let notificationSettings = {
+      enabled: false,
+      time: '09:00',
+      lastNotificationDate: null
+    };
+
+    const notificationToggle = document.getElementById('notificationToggle');
+    const notificationTime = document.getElementById('notificationTime');
+    const notificationStatus = document.getElementById('notificationStatus');
+    let swRegistration = null;
+
+    // IndexedDB for sharing data with service worker
+    function openNotificationDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('SpeakersGymDB', 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+          }
+          if (!db.objectStoreNames.contains('stats')) {
+            db.createObjectStore('stats', { keyPath: 'key' });
+          }
+        };
+      });
+    }
+
+    async function saveSettingsToDB(settings) {
+      try {
+        const db = await openNotificationDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('settings', 'readwrite');
+          const store = tx.objectStore('settings');
+          const request = store.put({ key: 'notifications', value: settings });
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
+      } catch (e) {
+        console.error('Error saving to IndexedDB:', e);
+      }
+    }
+
+    async function loadSettingsFromDB() {
+      try {
+        const db = await openNotificationDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('settings', 'readonly');
+          const store = tx.objectStore('settings');
+          const request = store.get('notifications');
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve(request.result?.value);
+        });
+      } catch (e) {
+        console.error('Error loading from IndexedDB:', e);
+        return null;
+      }
+    }
+
+    async function saveStatsToDB() {
+      try {
+        const db = await openNotificationDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('stats', 'readwrite');
+          const store = tx.objectStore('stats');
+          const request = store.put({
+            key: 'daily',
+            value: {
+              todaySpeeches: stats.todaySpeeches,
+              lastDate: stats.lastDate
+            }
+          });
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
+      } catch (e) {
+        console.error('Error saving stats to IndexedDB:', e);
+      }
+    }
+
+    async function saveNotificationSettings() {
+      localStorage.setItem('sgNotifications', JSON.stringify(notificationSettings));
+      await saveSettingsToDB(notificationSettings);
+    }
+
+    function updateNotificationStatus() {
+      if (!('Notification' in window)) {
+        notificationStatus.textContent = 'Notifications not supported in this browser';
+        notificationStatus.className = 'notification-status denied';
+        notificationToggle.disabled = true;
+        return;
+      }
+
+      if (Notification.permission === 'denied') {
+        notificationStatus.textContent = 'Notifications blocked. Enable in browser settings.';
+        notificationStatus.className = 'notification-status denied';
+        notificationToggle.checked = false;
+        notificationSettings.enabled = false;
+        saveNotificationSettings();
+        return;
+      }
+
+      if (notificationSettings.enabled && Notification.permission === 'granted') {
+        notificationStatus.textContent = `Reminder set for ${formatTime12h(notificationSettings.time)}`;
+        notificationStatus.className = 'notification-status active';
+      } else {
+        notificationStatus.textContent = 'Enable to get daily practice reminders';
+        notificationStatus.className = 'notification-status';
+      }
+    }
+
+    function formatTime12h(time24) {
+      const [hours, minutes] = time24.split(':').map(Number);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hours12 = hours % 12 || 12;
+      return `${hours12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+    }
+
+    async function requestNotificationPermission() {
+      if (!('Notification' in window)) return false;
+      if (Notification.permission === 'granted') return true;
+      if (Notification.permission !== 'denied') {
+        const permission = await Notification.requestPermission();
+        return permission === 'granted';
+      }
+      return false;
+    }
+
+    // Register for Periodic Background Sync (for scheduled notifications)
+    async function registerPeriodicSync() {
+      if (!swRegistration) return false;
+
+      try {
+        // Check if periodic sync is supported
+        if ('periodicSync' in swRegistration) {
+          const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+          if (status.state === 'granted') {
+            await swRegistration.periodicSync.register('daily-reminder-sync', {
+              minInterval: 60 * 60 * 1000 // Check every hour minimum
+            });
+            console.log('Periodic sync registered');
+            return true;
+          }
+        }
+      } catch (e) {
+        console.log('Periodic sync not available:', e);
+      }
+
+      // Fallback: use regular background sync
+      try {
+        if ('sync' in swRegistration) {
+          await swRegistration.sync.register('daily-reminder');
+          console.log('Background sync registered');
+          return true;
+        }
+      } catch (e) {
+        console.log('Background sync not available:', e);
+      }
+
+      return false;
+    }
+
+    // Ask service worker to check and show notification
+    function triggerNotificationCheck() {
+      if (swRegistration && swRegistration.active) {
+        swRegistration.active.postMessage({ type: 'CHECK_REMINDER' });
+      }
+    }
+
+    async function handleNotificationToggle() {
+      if (notificationToggle.checked) {
+        const granted = await requestNotificationPermission();
+        if (granted) {
+          notificationSettings.enabled = true;
+          notificationSettings.time = notificationTime.value;
+          await saveNotificationSettings();
+          await saveStatsToDB();
+          await registerPeriodicSync();
+          triggerNotificationCheck();
+          showAchievement("Daily reminders enabled!");
+        } else {
+          notificationToggle.checked = false;
+          notificationSettings.enabled = false;
+          await saveNotificationSettings();
+        }
+      } else {
+        notificationSettings.enabled = false;
+        await saveNotificationSettings();
+        // Unregister periodic sync
+        if (swRegistration && 'periodicSync' in swRegistration) {
+          try {
+            await swRegistration.periodicSync.unregister('daily-reminder-sync');
+          } catch (e) { /* ignore */ }
+        }
+      }
+      updateNotificationStatus();
+    }
+
+    async function handleTimeChange() {
+      notificationSettings.time = notificationTime.value;
+      const today = new Date().toDateString();
+      if (notificationSettings.lastNotificationDate === today) {
+        const [targetHours, targetMinutes] = notificationSettings.time.split(':').map(Number);
+        const now = new Date();
+        if (now.getHours() < targetHours ||
+            (now.getHours() === targetHours && now.getMinutes() < targetMinutes)) {
+          notificationSettings.lastNotificationDate = null;
+        }
+      }
+      await saveNotificationSettings();
+      updateNotificationStatus();
+    }
+
+    async function initNotifications() {
+      // Load from IndexedDB first, then localStorage as fallback
+      const dbSettings = await loadSettingsFromDB();
+      if (dbSettings) {
+        notificationSettings = dbSettings;
+      } else {
+        const lsSettings = localStorage.getItem('sgNotifications');
+        if (lsSettings) {
+          notificationSettings = JSON.parse(lsSettings);
+          await saveSettingsToDB(notificationSettings);
+        }
+      }
+
+      notificationToggle.checked = notificationSettings.enabled;
+      notificationTime.value = notificationSettings.time;
+
+      notificationToggle.addEventListener('change', handleNotificationToggle);
+      notificationTime.addEventListener('change', handleTimeChange);
+
+      updateNotificationStatus();
+
+      // Sync stats to IndexedDB so service worker can access
+      await saveStatsToDB();
+
+      // Register periodic sync if notifications enabled
+      if (notificationSettings.enabled && Notification.permission === 'granted') {
+        await registerPeriodicSync();
+        // Check immediately when app opens
+        setTimeout(triggerNotificationCheck, 2000);
+      }
+    }
+
+    // Update IndexedDB when stats change (hook into completeSpeech)
+    const originalCompleteSpeech = completeSpeech;
+    completeSpeech = function() {
+      originalCompleteSpeech();
+      saveStatsToDB();
+    };
+
+    init();
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(async (reg) => {
+          console.log('Service Worker registered');
+          swRegistration = reg;
+          // Wait for service worker to be ready
+          await navigator.serviceWorker.ready;
+          // Initialize notifications after SW is ready
+          await initNotifications();
+        })
+        .catch(err => {
+          console.log('Service Worker registration failed:', err);
+          initNotifications();
+        });
+    } else {
+      initNotifications();
+    }
+  </script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ===== FIREBASE CONFIGURATION =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9FgsxgB0EuK1Oeh7HTqQPqgz03KXv9Sg",
+      authDomain: "speaker-s-gym-premium.firebaseapp.com",
+      projectId: "speaker-s-gym-premium",
+      storageBucket: "speaker-s-gym-premium.firebasestorage.app",
+      messagingSenderId: "746797685018",
+      appId: "1:746797685018:web:e3e35c811327e5e318b4a3"
+    };
+
+    // Initialize Firebase
+    let app, auth, db, currentUser = null;
+    let syncEnabled = false;
+    let firebaseReady = false;
+
+    async function initializeFirebase() {
+      console.log('[Firebase] Starting initialization...');
+      try {
+        console.log('[Firebase] Calling firebase.initializeApp...');
+        app = firebase.initializeApp(firebaseConfig);
+        console.log('[Firebase] Getting auth reference...');
+        auth = firebase.auth();
+        console.log('[Firebase] Getting firestore reference...');
+        db = firebase.firestore();
+
+        // Enable offline persistence - handle quota errors gracefully
+        console.log('[Firebase] Attempting to enable persistence...');
+        try {
+          await db.enablePersistence({ synchronizeTabs: true });
+          console.log('[Firebase] Persistence enabled successfully');
+        } catch (err) {
+          if (err.code === 'failed-precondition') {
+            console.log('[Firebase] Multiple tabs open, persistence can only be enabled in one tab.');
+          } else if (err.code === 'unimplemented') {
+            console.log('[Firebase] Browser does not support offline persistence.');
+          } else if (err.name === 'QuotaExceededError' || (err.message && err.message.includes('quota'))) {
+            console.warn('[Firebase] ⚠️ Storage quota exceeded - persistence disabled.');
+            console.log('[Firebase] App will work online-only. Clear browser data to enable offline mode.');
+            // Try to clear old Firestore cache data
+            try {
+              const keys = Object.keys(localStorage);
+              for (const key of keys) {
+                if (key.startsWith('firestore_')) {
+                  localStorage.removeItem(key);
+                  console.log('[Firebase] Cleared cache key:', key);
+                }
+              }
+            } catch (e) {
+              console.log('[Firebase] Could not clear cache:', e);
+            }
+          } else {
+            console.error('[Firebase] Persistence error:', err);
+          }
+          // Continue without persistence - app will still work online
+          console.log('[Firebase] Continuing without offline persistence (online-only mode)');
+        }
+
+        syncEnabled = true;
+        firebaseReady = true;
+        console.log('[Firebase] ✅ Initialization complete! syncEnabled:', syncEnabled, 'firebaseReady:', firebaseReady);
+      } catch (error) {
+        console.error('[Firebase] ❌ Initialization error:', error);
+        console.log('[Firebase] App will work offline only.');
+        syncEnabled = false;
+        firebaseReady = false;
+      }
+    }
+
+    // Initialize Firebase and set up auth listeners
+    initializeFirebase().then(() => {
+      if (syncEnabled && firebaseReady) {
+        setupAuthListeners();
+      }
+    });
+
+    // ===== FIREBASE SYNC FUNCTIONS =====
+
+    let syncStatusTimeout = null;
+    let isSyncing = false;
+    let lastSyncStatus = null; // Track last status to prevent rapid changes
+    let syncDebounceTimeout = null; // Debounce timer for status changes
+
+    function updateSyncStatus(status, text) {
+      // Debounce rapid status changes - wait for stable state
+      if (syncDebounceTimeout) {
+        clearTimeout(syncDebounceTimeout);
+      }
+
+      // If trying to change to the same status, ignore
+      if (lastSyncStatus === status && status !== 'syncing') {
+        return;
+      }
+
+      // For 'syncing' status, apply immediately but with debouncing for the end
+      if (status === 'syncing') {
+        applyStatusUpdate(status, text);
+        lastSyncStatus = status;
+      } else {
+        // For other statuses, debounce to prevent rapid flickering
+        syncDebounceTimeout = setTimeout(() => {
+          applyStatusUpdate(status, text);
+          lastSyncStatus = status;
+        }, 1500); // Wait 1.5 seconds before applying non-syncing states
+      }
+    }
+
+    function applyStatusUpdate(status, text) {
+      // Update profile dropdown sync status (silent - only visible when dropdown is open)
+      const profileSyncStatus = document.getElementById('profileSyncStatus');
+      const profileSyncStatusText = document.getElementById('profileSyncStatusText');
+      const profileBtn = document.getElementById('profileBtn');
+
+      // Update profile dropdown text
+      if (profileSyncStatus && profileSyncStatusText) {
+        profileSyncStatus.className = `profile-sync-status ${status}`;
+        profileSyncStatusText.textContent = text;
+      }
+
+      // Clear any pending status updates
+      if (syncStatusTimeout) {
+        clearTimeout(syncStatusTimeout);
+        syncStatusTimeout = null;
+      }
+
+      // Show syncing indicator on profile button (subtle pulse)
+      if (status === 'syncing') {
+        if (profileBtn) profileBtn.classList.add('syncing');
+      } else {
+        if (profileBtn) profileBtn.classList.remove('syncing');
+      }
+
+      // Auto-change to "Up to date" after syncing completes
+      if (status === 'synced' && text === 'Synced') {
+        syncStatusTimeout = setTimeout(() => {
+          if (profileSyncStatusText) {
+            profileSyncStatusText.textContent = 'Up to date';
+          }
+        }, 2000);
+      }
+
+      // Only log errors to console, other statuses are silent
+      if (status === 'error' || status === 'offline') {
+        console.warn('[Sync]', text);
+      }
+    }
+
+    async function syncSpeechToFirebase(speechData) {
+      if (!syncEnabled || !currentUser) return;
+
+      try {
+        console.log('[Firebase] Syncing speech to Firestore...');
+        updateSyncStatus('syncing', 'Syncing...');
+
+        await db.collection('users').doc(currentUser.uid)
+          .collection('speeches').add({
+            ...speechData,
+            userId: currentUser.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+        console.log('[Firebase] Speech synced successfully');
+        updateSyncStatus('synced', 'Synced');
+      } catch (error) {
+        console.error('[Firebase] Error syncing speech:', error);
+        updateSyncStatus('offline', 'Sync failed');
+      }
+    }
+
+    // Calculate stats from Firestore speeches collection (single source of truth)
+    async function calculateStatsFromFirestore() {
+      if (!syncEnabled || !currentUser) return;
+
+      try {
+        console.log('[Stats] Calculating stats from Firestore speeches...');
+
+        // Get all speeches for this user
+        const speechesSnapshot = await db.collection('users').doc(currentUser.uid)
+          .collection('speeches')
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        // Calculate stats from actual speech documents
+        const speeches = [];
+        const ratings = [];
+        const weekHistory = {};
+
+        speechesSnapshot.forEach(doc => {
+          const data = doc.data();
+          speeches.push(data);
+
+          if (data.rating) {
+            ratings.push(data.rating);
+          }
+
+          // Mark dates in week history
+          if (data.createdAt) {
+            const date = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+            weekHistory[date.toDateString()] = true;
+          }
+        });
+
+        // Count today's speeches
+        const today = new Date().toDateString();
+        const todaySpeeches = speeches.filter(s => {
+          if (!s.createdAt) return false;
+          const date = s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt);
+          return date.toDateString() === today;
+        }).length;
+
+        // Calculate streak
+        let streak = 0;
+        const checkDate = new Date();
+        while (true) {
+          const dateStr = checkDate.toDateString();
+          if (weekHistory[dateStr]) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else if (dateStr === today && todaySpeeches === 0) {
+            // Today doesn't break streak if no speeches yet
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+
+        // Update stats object
+        stats.todaySpeeches = todaySpeeches;
+        stats.totalSpeeches = speeches.length;
+        stats.streak = streak;
+        stats.ratings = ratings;
+        stats.weekHistory = weekHistory;
+        stats.lastDate = today;
+
+        // Save to localStorage as cache
+        saveStats();
+
+        // Update UI
+        updateStats();
+        updateWeekCalendar();
+        updateNudge();
+
+        console.log('[Stats] Stats calculated:', {
+          total: stats.totalSpeeches,
+          today: stats.todaySpeeches,
+          streak: stats.streak
+        });
+
+      } catch (error) {
+        console.error('[Stats] Error calculating stats:', error);
+      }
+    }
+
+    // REMOVED: syncStatsToFirebase() - Stats are now derived from speeches collection
+    // REMOVED: syncSettingsToFirebase() - Settings will be handled separately if needed
+    // REMOVED: loadDataFromFirebase() - Replaced with calculateStatsFromFirestore()
+
+    async function syncSettingsToFirebase(settings) {
+      if (!syncEnabled || !currentUser) return;
+
+      try {
+        await db.collection('users').doc(currentUser.uid).set({
+          settings: settings,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        console.log('[Firebase] Settings synced successfully');
+      } catch (error) {
+        console.error('[Firebase] Error syncing settings:', error);
+      }
+    }
+
+    async function loadSettingsFromFirebase() {
+      if (!syncEnabled || !currentUser) return;
+
+      try {
+        console.log('[Settings] Loading settings from Firestore...');
+
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+
+        if (userDoc.exists) {
+          const data = userDoc.data();
+
+          // Load settings ONLY (not stats - those are calculated from speeches)
+          if (data.settings) {
+            if (data.settings.aiEnabled !== undefined) {
+              aiEnabled = data.settings.aiEnabled;
+              const toggle = document.getElementById('aiToggle');
+              if (toggle) toggle.checked = aiEnabled;
+              updateAIToggleUI();
+            }
+
+            if (data.settings.notifications) {
+              notificationSettings = { ...notificationSettings, ...data.settings.notifications };
+              await saveSettingsToDB(notificationSettings);
+            }
+          }
+        }
+
+        console.log('[Settings] Settings loaded successfully');
+      } catch (error) {
+        console.error('[Settings] Error loading settings:', error);
+      }
+    }
+
+    async function migrateLocalDataToFirebase() {
+      console.log('[Migration] Starting migration process...');
+      console.log('[Migration] syncEnabled:', syncEnabled, 'currentUser:', currentUser?.email);
+
+      if (!syncEnabled || !currentUser) {
+        console.log('[Migration] Skipping - not enabled or no user');
+        return;
+      }
+
+      try {
+        console.log('[Migration] Setting status to "Migrating data..."');
+        updateSyncStatus('syncing', 'Migrating data...');
+
+        // Check if migration already done
+        console.log('[Migration] Checking if already migrated...');
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        console.log('[Migration] User doc exists:', userDoc.exists);
+
+        if (userDoc.exists && userDoc.data().migrated) {
+          console.log('[Migration] Data already migrated, skipping');
+          updateSyncStatus('synced', 'Up to date');
+          return;
+        }
+
+        console.log('[Migration] Not migrated yet, starting migration...');
+
+        // Upload settings only (NOT stats - they're calculated from speeches)
+        console.log('[Migration] Syncing settings to Firebase...');
+        await syncSettingsToFirebase({
+          aiEnabled: aiEnabled,
+          notifications: notificationSettings
+        });
+        console.log('[Migration] Settings synced successfully');
+
+        // Mark as migrated
+        console.log('[Migration] Marking migration as complete...');
+        await db.collection('users').doc(currentUser.uid).set({
+          migrated: true,
+          migratedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        console.log('[Migration] Migration marked complete');
+
+        console.log('[Migration] Migration completed successfully!');
+        showAchievement('📤 Settings synced to cloud!');
+        updateSyncStatus('synced', 'Up to date');
+      } catch (error) {
+        console.error('[Migration] Migration error:', error);
+        console.error('[Migration] Error details:', error.message);
+        console.error('[Migration] Error stack:', error.stack);
+        updateSyncStatus('offline', 'Migration failed');
+      }
+    }
+
+    // ===== AUTH STATE MANAGEMENT =====
+
+    function setupAuthListeners() {
+      // Profile button and dropdown
+      const profileBtn = document.getElementById('profileBtn');
+      const profileDropdown = document.getElementById('profileDropdown');
+      const profileIcon = document.getElementById('profileIcon');
+
+      // Toggle dropdown on click
+      profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('show');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        profileDropdown.classList.remove('show');
+      });
+
+      // Prevent dropdown from closing when clicking inside it
+      profileDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      auth.onAuthStateChanged(async (user) => {
+        const profileSignedOut = document.getElementById('profileSignedOut');
+        const profileSignedIn = document.getElementById('profileSignedIn');
+        const profileUserEmail = document.getElementById('profileUserEmail');
+
+        if (user) {
+          // User signed in
+          currentUser = user;
+          console.log('[Auth] User signed in:', user.email);
+
+          // Update profile UI
+          if (profileSignedOut) profileSignedOut.style.display = 'none';
+          if (profileSignedIn) profileSignedIn.style.display = 'block';
+          if (profileUserEmail) profileUserEmail.textContent = user.email;
+
+          // Update profile button to show signed-in state
+          profileBtn.classList.add('signed-in');
+          profileIcon.textContent = '✓';
+
+          // Load settings from Firebase
+          await loadSettingsFromFirebase();
+
+          // Migrate local data if first time (settings only)
+          await migrateLocalDataToFirebase();
+
+          // Calculate stats from speeches collection (source of truth)
+          await calculateStatsFromFirestore();
+
+          // Set up real-time listener on speeches collection
+          // This ensures stats update whenever a new speech is added from any device
+          db.collection('users').doc(user.uid)
+            .collection('speeches')
+            .onSnapshot(() => {
+              console.log('[Sync] Speeches changed, recalculating stats...');
+              calculateStatsFromFirestore();
+            });
+
+        } else {
+          // User signed out
+          currentUser = null;
+          console.log('[Auth] User signed out');
+
+          // Update profile UI
+          if (profileSignedOut) profileSignedOut.style.display = 'block';
+          if (profileSignedIn) profileSignedIn.style.display = 'none';
+
+          // Reset profile button
+          profileBtn.classList.remove('signed-in');
+          profileIcon.textContent = '👤';
+
+          updateSyncStatus('offline', 'Not syncing');
+        }
+      });
+
+      // Sign in button (in profile dropdown)
+      const profileGoogleSignInBtn = document.getElementById('profileGoogleSignInBtn');
+      if (profileGoogleSignInBtn) {
+        profileGoogleSignInBtn.addEventListener('click', async () => {
+          try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await auth.signInWithPopup(provider);
+            profileDropdown.classList.remove('show');
+            showAchievement('✅ Signed in successfully!');
+          } catch (error) {
+            console.error('[Auth] Sign in error:', error);
+            showAchievement('❌ Sign in failed: ' + error.message);
+          }
+        });
+      }
+
+      // Sign out button (in profile dropdown)
+      const profileSignOutBtn = document.getElementById('profileSignOutBtn');
+      if (profileSignOutBtn) {
+        profileSignOutBtn.addEventListener('click', async () => {
+          try {
+            await auth.signOut();
+            profileDropdown.classList.remove('show');
+            showAchievement('👋 Signed out');
+          } catch (error) {
+            console.error('[Auth] Sign out error:', error);
+          }
+        });
+      }
+    }
+
+    // ===== HOOK INTO EXISTING FUNCTIONS FOR AUTO-SYNC =====
+
+    // Wrap completeSpeech to sync speech to Firebase
+    const originalCompleteSpeechFunc = completeSpeech;
+    completeSpeech = function() {
+      originalCompleteSpeechFunc();
+
+      // Sync speech document to Firebase (stats will be automatically recalculated from speeches)
+      if (syncEnabled && currentUser) {
+        const transcript = manualTranscript?.value || '';
+        const feedback = aiFeedback?.textContent || '';
+
+        // Always sync the speech (even without transcript/feedback for stats tracking)
+        syncSpeechToFirebase({
+          word: currentWord?.word || '',
+          definition: currentWord?.definition || '',
+          duration: elapsedSeconds,
+          transcript: transcript,
+          feedback: feedback,
+          rating: stats.ratings[stats.ratings.length - 1] || null,
+          mode: currentMode
+        });
+      }
+    };
+
+    // NOTE: Removed saveStats wrapper - stats are now calculated from speeches collection, not synced directly
+
+    // Wrap AI toggle to sync settings
+    const originalUpdateAIToggleUI = updateAIToggleUI;
+    updateAIToggleUI = function() {
+      originalUpdateAIToggleUI();
+      if (syncEnabled && currentUser) {
+        syncSettingsToFirebase({
+          aiEnabled: aiEnabled,
+          notifications: notificationSettings
+        });
+      }
+    };
+
+    // Monitor connection status
+    if (syncEnabled) {
+      window.addEventListener('online', () => {
+        updateSyncStatus('synced', 'Back online');
+        if (currentUser) {
+          loadDataFromFirebase();
+        }
+      });
+
+      window.addEventListener('offline', () => {
+        updateSyncStatus('offline', 'Offline');
+      });
+    }
+
+    // ===== PAGE NAVIGATION SYSTEM =====
+    let currentPage = 'main';
+
+    function navigateToPage(pageName) {
+      // Stop any active media/timers when leaving main page
+      if (currentPage === 'main') {
+        stopMedia();
+        if (isRunning) {
+          stopTimer(false);
+        }
+      }
+
+      // Stop rapid fire if leaving that page
+      if (currentPage === 'rapidfire') {
+        stopRapidFirePage();
+      }
+
+      // Stop warm up timers if leaving that page
+      if (currentPage === 'warmup') {
+        stopAllWarmupTimers();
+      }
+
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+
+      // Show the target page
+      if (pageName === 'main') {
+        document.getElementById('mainPage').classList.add('active');
+      } else if (pageName === 'rapidfire') {
+        document.getElementById('rapidFirePage').classList.add('active');
+        updateRapidFirePageStats();
+        updateRapidFirePageCue();
+      } else if (pageName === 'warmup') {
+        document.getElementById('warmUpPage').classList.add('active');
+      } else if (pageName === 'settings') {
+        document.getElementById('settingsPage').classList.add('active');
+        updateSettingsPageUI();
+      }
+
+      // Update menu active state
+      document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+      const menuItem = document.querySelector(`.menu-item[data-page="${pageName}"]`);
+      if (menuItem) menuItem.classList.add('active');
+
+      currentPage = pageName;
+      closeMenu();
+    }
+
+    // Hamburger Menu Functions
+    function openMenu() {
+      document.getElementById('menuSidebar').classList.add('show');
+      document.getElementById('menuOverlay').classList.add('show');
+    }
+
+    function closeMenu() {
+      document.getElementById('menuSidebar').classList.remove('show');
+      document.getElementById('menuOverlay').classList.remove('show');
+    }
+
+    // Setup hamburger menu event listeners
+    document.getElementById('hamburgerBtn').addEventListener('click', openMenu);
+    document.getElementById('menuClose').addEventListener('click', closeMenu);
+    document.getElementById('menuOverlay').addEventListener('click', closeMenu);
+
+    // Menu item navigation
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const pageName = item.getAttribute('data-page');
+        navigateToPage(pageName);
+      });
+    });
+
+    // Back buttons
+    document.getElementById('rapidFireBackBtn').addEventListener('click', () => navigateToPage('main'));
+    document.getElementById('warmUpBackBtn').addEventListener('click', () => navigateToPage('main'));
+    document.getElementById('settingsBackBtn').addEventListener('click', () => navigateToPage('main'));
+
+    // ===== RAPID FIRE PAGE FUNCTIONS =====
+    let rapidFirePageInterval = null;
+    let rapidFirePageRunning = false;
+    let rapidFirePageCurrentRound = 0;
+    let rapidFirePageTotalRounds = 10;
+    let rapidFirePageTimePerRound = 3;
+    let rapidFirePageTimer = 3;
+
+    function updateRapidFirePageStats() {
+      document.getElementById('rfTotalSessionsPage').textContent = rapidFireStats.totalSessions;
+      document.getElementById('rfTotalAnalogiesPage').textContent = rapidFireStats.totalAnalogies;
+      if (rapidFireStats.fastestTime) {
+        document.getElementById('rfFastestTimePage').textContent = rapidFireStats.fastestTime + 's';
+      } else {
+        document.getElementById('rfFastestTimePage').textContent = '--';
+      }
+    }
+
+    function updateRapidFirePageCue() {
+      const randomCue = rapidFireCues[Math.floor(Math.random() * rapidFireCues.length)];
+      document.getElementById('rapidFireCuePage').textContent = `"${randomCue}"`;
+    }
+
+    function startRapidFirePage() {
+      if (rapidFirePageRunning) return;
+      rapidFirePageRunning = true;
+
+      // Get settings
+      rapidFirePageTimePerRound = parseInt(document.getElementById('rapidFireTimePage').value);
+      rapidFirePageTotalRounds = parseInt(document.getElementById('rapidFireRoundsPage').value);
+      rapidFirePageCurrentRound = 0;
+      rapidFirePageTimer = rapidFirePageTimePerRound;
+
+      // Hide settings, show game
+      document.getElementById('rapidFireSettingsPage').style.display = 'none';
+      document.getElementById('rapidFireGamePage').style.display = 'block';
+      document.getElementById('startRapidFireBtnPage').style.display = 'none';
+      document.getElementById('stopRapidFireBtnPage').style.display = 'block';
+
+      // Start first round
+      nextRapidFirePageRound();
+    }
+
+    function nextRapidFirePageRound() {
+      rapidFirePageCurrentRound++;
+      if (rapidFirePageCurrentRound > rapidFirePageTotalRounds) {
+        endRapidFirePageSession();
+        return;
+      }
+
+      // Update round info
+      document.getElementById('rapidFireRoundInfoPage').textContent = `Round ${rapidFirePageCurrentRound} of ${rapidFirePageTotalRounds}`;
+
+      // Generate new word pair (getRandomWords() returns formatted sentence)
+      const sentence = getRandomWords();
+      document.getElementById('rapidFireSentencePage').textContent = sentence;
+
+      // Reset timer
+      rapidFirePageTimer = rapidFirePageTimePerRound;
+      updateRapidFirePageTimerDisplay();
+
+      // Start countdown
+      rapidFirePageInterval = setInterval(() => {
+        rapidFirePageTimer--;
+        updateRapidFirePageTimerDisplay();
+        if (rapidFirePageTimer <= 0) {
+          clearInterval(rapidFirePageInterval);
+          rapidFireStats.totalAnalogies++;
+          saveRapidFireStats();
+          updateRapidFirePageStats();
+          nextRapidFirePageRound();
+        }
+      }, 1000);
+    }
+
+    function updateRapidFirePageTimerDisplay() {
+      const timerEl = document.getElementById('rapidFireTimerPage');
+      timerEl.textContent = rapidFirePageTimer;
+      timerEl.classList.remove('warning', 'danger');
+      if (rapidFirePageTimer <= 1) timerEl.classList.add('danger');
+      else if (rapidFirePageTimer <= 2) timerEl.classList.add('warning');
+    }
+
+    function endRapidFirePageSession() {
+      rapidFirePageRunning = false;
+      clearInterval(rapidFirePageInterval);
+
+      // Update stats
+      rapidFireStats.totalSessions++;
+      if (!rapidFireStats.fastestTime || rapidFirePageTimePerRound < rapidFireStats.fastestTime) {
+        rapidFireStats.fastestTime = rapidFirePageTimePerRound;
+      }
+      saveRapidFireStats();
+      updateRapidFirePageStats();
+
+      // Save to Firestore if logged in
+      if (syncEnabled && currentUser) {
+        syncRapidFireToFirebase();
+      }
+
+      // Show settings, hide game
+      document.getElementById('rapidFireSettingsPage').style.display = 'block';
+      document.getElementById('rapidFireGamePage').style.display = 'none';
+      document.getElementById('startRapidFireBtnPage').style.display = 'block';
+      document.getElementById('stopRapidFireBtnPage').style.display = 'none';
+
+      showAchievement(`⚡ Session complete! ${rapidFirePageTotalRounds} analogies!`);
+    }
+
+    function stopRapidFirePage() {
+      if (!rapidFirePageRunning) return;
+      rapidFirePageRunning = false;
+      clearInterval(rapidFirePageInterval);
+
+      // Show settings, hide game
+      document.getElementById('rapidFireSettingsPage').style.display = 'block';
+      document.getElementById('rapidFireGamePage').style.display = 'none';
+      document.getElementById('startRapidFireBtnPage').style.display = 'block';
+      document.getElementById('stopRapidFireBtnPage').style.display = 'none';
+    }
+
+    // Sync rapid fire to Firebase
+    async function syncRapidFireToFirebase() {
+      if (!currentUser) return;
+      try {
+        await db.collection('users').doc(currentUser.uid)
+          .collection('rapidFire').add({
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            rounds: rapidFirePageTotalRounds,
+            timePerRound: rapidFirePageTimePerRound,
+            totalAnalogies: rapidFirePageTotalRounds
+          });
+        console.log('[Firebase] Rapid Fire session synced');
+      } catch (error) {
+        console.error('[Firebase] Error syncing Rapid Fire:', error);
+      }
+    }
+
+    // Rapid Fire page event listeners
+    document.getElementById('startRapidFireBtnPage').addEventListener('click', startRapidFirePage);
+    document.getElementById('stopRapidFireBtnPage').addEventListener('click', stopRapidFirePage);
+
+    // ===== WARM UP PAGE FUNCTIONS =====
+    const tongueTwisters = [
+      "She sells seashells by the seashore",
+      "Peter Piper picked a peck of pickled peppers",
+      "How much wood would a woodchuck chuck if a woodchuck could chuck wood",
+      "Red lorry, yellow lorry, red lorry, yellow lorry",
+      "Unique New York, unique New York, you know you need unique New York",
+      "The sixth sick sheikh's sixth sheep's sick",
+      "Fuzzy Wuzzy was a bear, Fuzzy Wuzzy had no hair",
+      "A proper copper coffee pot",
+      "I scream, you scream, we all scream for ice cream",
+      "Betty Botter bought some butter, but she said the butter's bitter"
+    ];
+    let currentTwisterIndex = 0;
+
+    let warmupTimers = {
+      breathing: { interval: null, running: false, seconds: 0, target: 48, phase: 0, phaseTime: 0 },
+      lipTrill: { interval: null, running: false, seconds: 30, target: 30 },
+      humming: { interval: null, running: false, seconds: 30, target: 30 }
+    };
+
+    const breathingPhases = [
+      { name: 'INHALE', duration: 4, color: '#60a5fa' },
+      { name: 'HOLD', duration: 4, color: '#a78bfa' },
+      { name: 'EXHALE', duration: 4, color: '#34d399' },
+      { name: 'HOLD', duration: 4, color: '#a78bfa' }
+    ];
+
+    function formatWarmupTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function updateBreathingPhase() {
+      const timer = warmupTimers.breathing;
+      const circle = document.getElementById('breathingCircle');
+      const phaseEl = document.getElementById('breathingPhase');
+      const display = document.getElementById('breathingTimerDisplay');
+
+      const phase = breathingPhases[timer.phase];
+      phaseEl.textContent = phase.name;
+      phaseEl.style.color = phase.color;
+      display.textContent = timer.phaseTime;
+
+      // Update animation based on phase
+      if (phase.name === 'INHALE') {
+        circle.style.transform = `scale(${1 + (timer.phaseTime / phase.duration) * 0.5})`;
+      } else if (phase.name === 'EXHALE') {
+        circle.style.transform = `scale(${1.5 - (timer.phaseTime / phase.duration) * 0.5})`;
+      }
+    }
+
+    function startWarmupTimer(type) {
+      if (warmupTimers[type].running) return;
+      warmupTimers[type].running = true;
+
+      const startBtn = document.getElementById(`start${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+      const stopBtn = document.getElementById(`stop${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+
+      if (type === 'breathing') {
+        warmupTimers[type].seconds = 0;
+        warmupTimers[type].phase = 0;
+        warmupTimers[type].phaseTime = 0;
+
+        const circle = document.getElementById('breathingCircle');
+        circle.classList.add('animating');
+        updateBreathingPhase();
+
+        warmupTimers[type].interval = setInterval(() => {
+          const timer = warmupTimers.breathing;
+          timer.seconds++;
+          timer.phaseTime++;
+
+          const currentPhase = breathingPhases[timer.phase];
+          if (timer.phaseTime >= currentPhase.duration) {
+            timer.phaseTime = 0;
+            timer.phase = (timer.phase + 1) % breathingPhases.length;
+          }
+
+          updateBreathingPhase();
+
+          if (timer.seconds >= timer.target) {
+            stopWarmupTimer('breathing');
+            showAchievement("🌬️ Breathing exercise complete!");
+          }
+        }, 1000);
+      } else {
+        const display = document.getElementById(`${type}Timer`);
+        warmupTimers[type].interval = setInterval(() => {
+          warmupTimers[type].seconds--;
+          display.textContent = formatWarmupTime(warmupTimers[type].seconds);
+          if (warmupTimers[type].seconds <= 0) {
+            stopWarmupTimer(type);
+            showAchievement(type === 'lipTrill' ? "💋 Lip trills done!" : "🎵 Humming complete!");
+          }
+        }, 1000);
+      }
+    }
+
+    function stopWarmupTimer(type) {
+      clearInterval(warmupTimers[type].interval);
+      warmupTimers[type].running = false;
+
+      const btnName = type.charAt(0).toUpperCase() + type.slice(1);
+      const startBtn = document.getElementById(`start${btnName}Btn`);
+      const stopBtn = document.getElementById(`stop${btnName}Btn`);
+
+      startBtn.style.display = 'inline-block';
+      stopBtn.style.display = 'none';
+
+      if (type === 'breathing') {
+        warmupTimers[type].seconds = 0;
+        warmupTimers[type].phase = 0;
+        warmupTimers[type].phaseTime = 0;
+
+        const circle = document.getElementById('breathingCircle');
+        const phaseEl = document.getElementById('breathingPhase');
+        const display = document.getElementById('breathingTimerDisplay');
+
+        circle.classList.remove('animating');
+        circle.style.transform = 'scale(1)';
+        phaseEl.textContent = '';
+        display.textContent = '0:00';
+      } else {
+        const display = document.getElementById(`${type}Timer`);
+        warmupTimers[type].seconds = 30;
+        display.textContent = '0:30';
+      }
+    }
+
+    function stopAllWarmupTimers() {
+      ['breathing', 'lipTrill', 'humming'].forEach(type => {
+        if (warmupTimers[type].running) {
+          stopWarmupTimer(type);
+        }
+      });
+    }
+
+    function nextTongueTwister() {
+      currentTwisterIndex = (currentTwisterIndex + 1) % tongueTwisters.length;
+      document.getElementById('tongueTwisterText').textContent = tongueTwisters[currentTwisterIndex];
+    }
+
+    // Warm up event listeners
+    document.getElementById('startBreathingBtn').addEventListener('click', () => startWarmupTimer('breathing'));
+    document.getElementById('stopBreathingBtn').addEventListener('click', () => stopWarmupTimer('breathing'));
+    document.getElementById('startLipTrillBtn').addEventListener('click', () => startWarmupTimer('lipTrill'));
+    document.getElementById('stopLipTrillBtn').addEventListener('click', () => stopWarmupTimer('lipTrill'));
+    document.getElementById('startHummingBtn').addEventListener('click', () => startWarmupTimer('humming'));
+    document.getElementById('stopHummingBtn').addEventListener('click', () => stopWarmupTimer('humming'));
+    document.getElementById('nextTwisterBtn').addEventListener('click', nextTongueTwister);
+
+    // ===== SETTINGS PAGE FUNCTIONS =====
+    let lastSyncTime = null;
+
+    function updateSettingsPageUI() {
+      // Update sync status
+      const syncStatusEl = document.getElementById('settingsSyncStatus');
+      const lastSyncEl = document.getElementById('settingsLastSync');
+      const settingsSignedOut = document.getElementById('settingsSignedOut');
+      const settingsSignedIn = document.getElementById('settingsSignedIn');
+      const settingsUserEmail = document.getElementById('settingsUserEmail');
+      const settingsAppVersion = document.getElementById('settingsAppVersion');
+
+      if (currentUser) {
+        syncStatusEl.textContent = 'Connected';
+        syncStatusEl.style.color = '#22c55e';
+        settingsSignedOut.style.display = 'none';
+        settingsSignedIn.style.display = 'block';
+        settingsUserEmail.textContent = currentUser.email;
+      } else {
+        syncStatusEl.textContent = 'Not signed in';
+        syncStatusEl.style.color = '#9ca3af';
+        settingsSignedOut.style.display = 'block';
+        settingsSignedIn.style.display = 'none';
+      }
+
+      if (lastSyncTime) {
+        lastSyncEl.textContent = lastSyncTime.toLocaleString();
+      } else {
+        lastSyncEl.textContent = 'Never';
+      }
+
+      // Update version
+      if (settingsAppVersion) {
+        settingsAppVersion.textContent = 'v3.1.0';
+      }
+    }
+
+    // Settings page sign in/out buttons
+    document.getElementById('settingsGoogleSignInBtn').addEventListener('click', async () => {
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
+        showAchievement('✅ Signed in successfully!');
+        updateSettingsPageUI();
+      } catch (error) {
+        console.error('[Auth] Sign in error:', error);
+        showAchievement('❌ Sign in failed: ' + error.message);
+      }
+    });
+
+    document.getElementById('settingsSignOutBtn').addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        showAchievement('👋 Signed out');
+        updateSettingsPageUI();
+      } catch (error) {
+        console.error('[Auth] Sign out error:', error);
+      }
+    });
+
+    // Manual sync button
+    document.getElementById('manualSyncBtn').addEventListener('click', async () => {
+      if (!currentUser) {
+        showAchievement('⚠️ Sign in to sync');
+        return;
+      }
+      try {
+        showAchievement('🔄 Syncing...');
+        await calculateStatsFromFirestore();
+        lastSyncTime = new Date();
+        updateSettingsPageUI();
+        showAchievement('✅ Sync complete!');
+      } catch (error) {
+        showAchievement('❌ Sync failed');
+      }
+    });
+
+  </script>
+</body>
+</html>
