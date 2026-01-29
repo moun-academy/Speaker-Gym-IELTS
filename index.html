@@ -21,6 +21,68 @@
       padding: 20px;
     }
 
+    body.auth-locked {
+      overflow: hidden;
+    }
+
+    body.auth-locked .container,
+    body.auth-locked .menu-sidebar {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 24px;
+    }
+
+    body:not(.auth-locked) .auth-gate {
+      display: none;
+    }
+
+    .auth-gate-card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .auth-gate-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #facc15;
+      margin-bottom: 12px;
+    }
+
+    .auth-gate-message {
+      font-size: 14px;
+      color: #cbd5f5;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .auth-gate-button {
+      width: 100%;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .profile-action-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .container {
       background: rgba(17, 24, 39, 0.95);
       border-radius: 24px;
@@ -1665,7 +1727,25 @@
   </style>
 </head>
 
-<body>
+<body class="auth-locked">
+  <div class="auth-gate" id="authGate" aria-live="polite">
+    <div class="auth-gate-card">
+      <div class="auth-gate-title">🔐 Sign in required</div>
+      <p class="auth-gate-message" id="authGateMessage">
+        Please sign in to access The Speaker's Gym.
+      </p>
+      <button class="profile-action-btn primary auth-gate-button" id="authGateSignInBtn">
+        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="none" d="M0 0h48v48H0z"/>
+        </svg>
+        Sign in with Google
+      </button>
+    </div>
+  </div>
   <!-- Hamburger Menu Overlay -->
   <div class="menu-overlay" id="menuOverlay"></div>
 
@@ -3833,9 +3913,26 @@
     }
 
     // Initialize Firebase and set up auth listeners
+    setAuthGateState({
+      locked: true,
+      message: 'Connecting to sign-in services...',
+      signInEnabled: false
+    });
+
     initializeFirebase().then(() => {
       if (syncEnabled && firebaseReady) {
+        setAuthGateState({
+          locked: true,
+          message: "Please sign in to access The Speaker's Gym.",
+          signInEnabled: true
+        });
         setupAuthListeners();
+      } else {
+        setAuthGateState({
+          locked: true,
+          message: 'Sign-in is currently unavailable. Please refresh once Firebase is ready.',
+          signInEnabled: false
+        });
       }
     });
 
@@ -4123,6 +4220,38 @@
 
     // ===== AUTH STATE MANAGEMENT =====
 
+    const authGate = document.getElementById('authGate');
+    const authGateMessage = document.getElementById('authGateMessage');
+    const authGateSignInBtn = document.getElementById('authGateSignInBtn');
+
+    function setAuthGateState({ locked, message, signInEnabled } = {}) {
+      if (typeof locked === 'boolean') {
+        document.body.classList.toggle('auth-locked', locked);
+      }
+
+      if (authGateMessage && typeof message === 'string') {
+        authGateMessage.textContent = message;
+      }
+
+      if (authGateSignInBtn && typeof signInEnabled === 'boolean') {
+        authGateSignInBtn.disabled = !signInEnabled;
+      }
+    }
+
+    async function signInWithGoogle() {
+      try {
+        if (!auth) {
+          throw new Error('Authentication service is not ready yet.');
+        }
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
+        showAchievement('✅ Signed in successfully!');
+      } catch (error) {
+        console.error('[Auth] Sign in error:', error);
+        showAchievement('❌ Sign in failed: ' + error.message);
+      }
+    }
+
     function setupAuthListeners() {
       // Profile button and dropdown
       const profileBtn = document.getElementById('profileBtn');
@@ -4154,6 +4283,11 @@
           // User signed in
           currentUser = user;
           console.log('[Auth] User signed in:', user.email);
+          setAuthGateState({
+            locked: false,
+            message: 'Signed in successfully.',
+            signInEnabled: true
+          });
 
           // Update profile UI
           if (profileSignedOut) profileSignedOut.style.display = 'none';
@@ -4186,6 +4320,11 @@
           // User signed out
           currentUser = null;
           console.log('[Auth] User signed out');
+          setAuthGateState({
+            locked: true,
+            message: "Please sign in to access The Speaker's Gym.",
+            signInEnabled: true
+          });
 
           // Update profile UI
           if (profileSignedOut) profileSignedOut.style.display = 'block';
@@ -4203,15 +4342,14 @@
       const profileGoogleSignInBtn = document.getElementById('profileGoogleSignInBtn');
       if (profileGoogleSignInBtn) {
         profileGoogleSignInBtn.addEventListener('click', async () => {
-          try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await auth.signInWithPopup(provider);
-            profileDropdown.classList.remove('show');
-            showAchievement('✅ Signed in successfully!');
-          } catch (error) {
-            console.error('[Auth] Sign in error:', error);
-            showAchievement('❌ Sign in failed: ' + error.message);
-          }
+          await signInWithGoogle();
+          profileDropdown.classList.remove('show');
+        });
+      }
+
+      if (authGateSignInBtn) {
+        authGateSignInBtn.addEventListener('click', async () => {
+          await signInWithGoogle();
         });
       }
 
