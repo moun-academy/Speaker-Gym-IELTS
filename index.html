@@ -664,63 +664,46 @@
 
     .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 6px; }
 
-    .word {
-      font-size: 36px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #facc15, #fbbf24);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+    /* IELTS Question Display */
+    .ielts-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
-    .definition { font-size: 14px; color: #d1d5db; }
-
-    /* Prompt Mode Toggle (Random Words vs IELTS) */
-    .prompt-mode-toggle {
+    .ielts-part-selector {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 16px;
     }
 
-    .prompt-mode-btn {
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: 2px solid #374151;
-      background: #1f2937;
+    .ielts-part-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #0f172a;
       color: #9ca3af;
-      cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
+      cursor: pointer;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .prompt-mode-btn:hover {
+    .ielts-part-btn:hover {
       border-color: rgba(250, 204, 21, 0.5);
       color: #e5e7eb;
     }
 
-    .prompt-mode-btn.active {
-      background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.1));
-      color: #facc15;
+    .ielts-part-btn.active {
+      background: rgba(250, 204, 21, 0.15);
       border-color: rgba(250, 204, 21, 0.5);
+      color: #facc15;
     }
 
-    .prompt-mode-btn .mode-icon {
-      font-size: 16px;
-    }
-
-    /* IELTS Question Display */
     .ielts-question {
-      display: none;
       padding: 8px 0;
-    }
-
-    .ielts-question.show {
-      display: block;
     }
 
     .ielts-part-badge {
@@ -752,6 +735,12 @@
       border: 1px solid rgba(168, 85, 247, 0.3);
     }
 
+    .ielts-part-badge.all {
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5f5;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
     .ielts-question-text {
       font-size: 20px;
       font-weight: 600;
@@ -776,19 +765,6 @@
       color: #9ca3af;
       margin-bottom: 6px;
       line-height: 1.4;
-    }
-
-    /* Hide definition when in IELTS mode */
-    .word-box.ielts-mode .definition {
-      display: none;
-    }
-
-    .word-box.ielts-mode .word {
-      display: none;
-    }
-
-    .word-box.ielts-mode .label {
-      display: none;
     }
 
     /* Mode Selector */
@@ -1583,7 +1559,6 @@
     @media (max-width: 640px) {
       .container { padding: 20px; padding-top: 60px; }
       h1 { font-size: 24px; }
-      .word { font-size: 28px; }
       .controls { grid-template-columns: 1fr; }
       .stats-bar { grid-template-columns: repeat(2, 1fr); }
 
@@ -1774,29 +1749,21 @@
     <!-- Nudge Banner -->
     <div class="nudge-banner" id="nudgeBanner"></div>
 
-    <!-- Prompt Mode Toggle -->
-    <div class="prompt-mode-toggle">
-      <button class="prompt-mode-btn active" id="randomWordsBtn">
-        <span class="mode-icon">🎲</span>
-        <span>Random Words</span>
-      </button>
-      <button class="prompt-mode-btn" id="ieltsBtn">
-        <span class="mode-icon">📝</span>
-        <span>IELTS Questions</span>
-      </button>
-    </div>
-
     <!-- Word Box -->
     <div class="word-box" id="wordBox">
-      <!-- Random Words Mode -->
-      <div class="label">Your Word</div>
-      <div id="word" class="word">Ready?</div>
-      <div class="definition" id="definition">Click "New Word" to get started</div>
+      <div class="ielts-header">
+        <div class="label">IELTS Speaking Practice</div>
+        <div class="ielts-part-selector" id="ieltsPartSelector">
+          <button class="ielts-part-btn active" data-part="all">All Parts</button>
+          <button class="ielts-part-btn" data-part="1">Part 1</button>
+          <button class="ielts-part-btn" data-part="2">Part 2</button>
+          <button class="ielts-part-btn" data-part="3">Part 3</button>
+        </div>
+      </div>
 
-      <!-- IELTS Mode -->
       <div class="ielts-question" id="ieltsQuestion">
         <span class="ielts-part-badge part1" id="ieltsBadge">Part 1</span>
-        <div class="ielts-question-text" id="ieltsQuestionText">Click "New Question" to get an IELTS speaking question</div>
+        <div class="ielts-question-text" id="ieltsQuestionText">Select a part and click "New Question" to get started.</div>
         <ul class="ielts-subpoints" id="ieltsSubpoints" style="display: none;"></ul>
       </div>
     </div>
@@ -1851,7 +1818,7 @@
 
     <!-- Controls -->
     <div class="controls">
-      <button id="newWordBtn" class="primary">New Word</button>
+      <button id="newWordBtn" class="primary">New Question</button>
       <button id="resetBtn" class="secondary">Reset</button>
     </div>
 
@@ -1890,7 +1857,7 @@
       </div>
 
       <div class="structure-content" id="structureContent">
-        Generate a word first to see your personalized speaking structure
+        Generate a question first to see your personalized speaking structure
       </div>
     </div>
 
@@ -2157,60 +2124,6 @@
   <div class="achievement" id="achievement"></div>
 
   <script>
-    // Word database
-    const words = [
-      { word: "Dream", definition: "A cherished aspiration or ideal" },
-      { word: "Focus", definition: "The center of interest or activity" },
-      { word: "Habit", definition: "A regular tendency or practice" },
-      { word: "Growth", definition: "The process of developing" },
-      { word: "Change", definition: "To make or become different" },
-      { word: "Kindness", definition: "Being friendly and considerate" },
-      { word: "Patience", definition: "Accepting delay without anger" },
-      { word: "Courage", definition: "Ability to face fear" },
-      { word: "Trust", definition: "Firm belief in reliability" },
-      { word: "Success", definition: "Accomplishment of an aim" },
-      { word: "Confidence", definition: "Feeling of self-assurance" },
-      { word: "Leadership", definition: "Action of leading a group" },
-      { word: "Goal", definition: "Object of ambition" },
-      { word: "Story", definition: "Account of events" },
-      { word: "Connection", definition: "Relationship between people" },
-      { word: "Challenge", definition: "Something that tests abilities" },
-      { word: "Learning", definition: "Acquiring knowledge or skills" },
-      { word: "Opportunity", definition: "Favorable situation" },
-      { word: "Choice", definition: "Selecting between alternatives" },
-      { word: "Action", definition: "Process of doing something" },
-      { word: "Fear", definition: "Emotion caused by threat" },
-      { word: "Joy", definition: "Feeling of great happiness" },
-      { word: "Peace", definition: "Freedom from disturbance" },
-      { word: "Purpose", definition: "Reason for existence" },
-      { word: "Energy", definition: "Strength for activity" },
-      { word: "Motivation", definition: "Reason for acting" },
-      { word: "Momentum", definition: "Force of movement" },
-      { word: "Passion", definition: "Strong emotion" },
-      { word: "Balance", definition: "State of equilibrium" },
-      { word: "Vision", definition: "Ability to imagine the future" },
-      { word: "Failure", definition: "Lack of success" },
-      { word: "Risk", definition: "Possibility of loss or danger" },
-      { word: "Gratitude", definition: "Being thankful" },
-      { word: "Honesty", definition: "Quality of being truthful" },
-      { word: "Respect", definition: "Admiration for someone" },
-      { word: "Creativity", definition: "Use of imagination" },
-      { word: "Discipline", definition: "Training to follow rules" },
-      { word: "Freedom", definition: "State of being free" },
-      { word: "Loyalty", definition: "Strong support or allegiance" },
-      { word: "Wisdom", definition: "Quality of having experience" },
-      { word: "Ambition", definition: "Strong desire to achieve" },
-      { word: "Persistence", definition: "Continuing despite difficulty" },
-      { word: "Empathy", definition: "Understanding others' feelings" },
-      { word: "Curiosity", definition: "Desire to learn or know" },
-      { word: "Simplicity", definition: "Quality of being easy" },
-      { word: "Silence", definition: "Complete absence of sound" },
-      { word: "Time", definition: "Ongoing sequence of events" },
-      { word: "Money", definition: "Medium of exchange" },
-      { word: "Health", definition: "State of being well" },
-      { word: "Family", definition: "Group of related people" }
-    ];
-
     // IELTS Speaking Questions (50 questions from Parts 1, 2, and 3)
     const ieltsQuestions = [
       // PART 1 - Personal Questions (20 questions)
@@ -2569,9 +2482,9 @@
     let liveTranscript = '';
     let currentAudioBlob = null;
 
-    // Prompt Mode state (Random Words vs IELTS)
-    let isIeltsMode = localStorage.getItem('promptMode') === 'ielts';
+    // IELTS question state
     let currentIeltsQuestion = null;
+    let selectedIeltsPart = localStorage.getItem('ieltsPart') || 'all';
 
     // Rapid Fire state
     let rapidFireStats = JSON.parse(localStorage.getItem('rapidFireStats')) || {
@@ -2591,8 +2504,6 @@
     let aiEnabled = localStorage.getItem('aiEnabled') !== 'false'; // Default ON
 
     // Elements
-    const wordEl = document.getElementById('word');
-    const definitionEl = document.getElementById('definition');
     const wordBox = document.getElementById('wordBox');
     const timerCircle = document.getElementById('timerCircle');
     const structureBox = document.getElementById('structureBox');
@@ -2609,8 +2520,7 @@
     const ieltsQuestionText = document.getElementById('ieltsQuestionText');
     const ieltsBadge = document.getElementById('ieltsBadge');
     const ieltsSubpoints = document.getElementById('ieltsSubpoints');
-    const randomWordsBtn = document.getElementById('randomWordsBtn');
-    const ieltsBtn = document.getElementById('ieltsBtn');
+    const ieltsPartSelector = document.getElementById('ieltsPartSelector');
     const newWordBtn = document.getElementById('newWordBtn');
 
     // Initialize
@@ -2621,70 +2531,52 @@
       updateNudge();
       initSpeechRecognition();
       initAIToggle();
-      initPromptModeToggle();
+      initIeltsPartSelector();
       setAiStatus('Waiting for your next recording.');
       manualTranscript.value = '';
       updateVersionDisplay();
     }
 
-    // Prompt Mode Toggle (Random Words vs IELTS)
-    function initPromptModeToggle() {
-      // Set initial UI state
-      updatePromptModeUI();
-
-      // Toggle event listeners
-      randomWordsBtn.addEventListener('click', () => {
-        if (!isIeltsMode) return;
-        isIeltsMode = false;
-        localStorage.setItem('promptMode', 'words');
-        updatePromptModeUI();
-        resetPrompt();
+    function initIeltsPartSelector() {
+      const partButtons = ieltsPartSelector.querySelectorAll('.ielts-part-btn');
+      partButtons.forEach((btn) => {
+        if (btn.dataset.part === selectedIeltsPart) {
+          btn.classList.add('active');
+        }
+        btn.addEventListener('click', () => {
+          if (selectedIeltsPart === btn.dataset.part) return;
+          selectedIeltsPart = btn.dataset.part;
+          localStorage.setItem('ieltsPart', selectedIeltsPart);
+          partButtons.forEach((other) => other.classList.toggle('active', other === btn));
+          resetPrompt();
+        });
       });
-
-      ieltsBtn.addEventListener('click', () => {
-        if (isIeltsMode) return;
-        isIeltsMode = true;
-        localStorage.setItem('promptMode', 'ielts');
-        updatePromptModeUI();
-        resetPrompt();
-      });
-    }
-
-    function updatePromptModeUI() {
-      // Update toggle buttons
-      randomWordsBtn.classList.toggle('active', !isIeltsMode);
-      ieltsBtn.classList.toggle('active', isIeltsMode);
-
-      // Update word box class
-      wordBox.classList.toggle('ielts-mode', isIeltsMode);
-
-      // Show/hide appropriate content
-      if (isIeltsMode) {
-        ieltsQuestionEl.classList.add('show');
-        newWordBtn.textContent = 'New Question';
-      } else {
-        ieltsQuestionEl.classList.remove('show');
-        newWordBtn.textContent = 'New Word';
-      }
+      resetPrompt();
     }
 
     function resetPrompt() {
       reset();
       currentWord = null;
       currentIeltsQuestion = null;
-      wordEl.textContent = 'Ready?';
-      definitionEl.textContent = isIeltsMode ? 'Click "New Question" to get started' : 'Click "New Word" to get started';
-      ieltsQuestionText.textContent = isIeltsMode ? 'Click "New Question" to get an IELTS speaking question' : '';
+      ieltsQuestionText.textContent = 'Select a part and click "New Question" to get started.';
       ieltsSubpoints.style.display = 'none';
       ieltsSubpoints.innerHTML = '';
-      ieltsBadge.textContent = 'Part 1';
-      ieltsBadge.className = 'ielts-part-badge part1';
+      ieltsBadge.textContent = selectedIeltsPart === 'all' ? 'All Parts' : `Part ${selectedIeltsPart}`;
+      ieltsBadge.className = selectedIeltsPart === 'all' ? 'ielts-part-badge all' : `ielts-part-badge part${selectedIeltsPart}`;
       structureBox.style.display = 'none';
+      const toggleBtn = document.getElementById('toggleStructureBtn');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<span class="btn-icon">✨</span><span>Structure Guide</span>';
+        toggleBtn.classList.remove('active');
+      }
     }
 
     function newIeltsQuestion() {
       reset();
-      currentIeltsQuestion = ieltsQuestions[Math.floor(Math.random() * ieltsQuestions.length)];
+      const availableQuestions = selectedIeltsPart === 'all'
+        ? ieltsQuestions
+        : ieltsQuestions.filter((question) => String(question.part) === selectedIeltsPart);
+      currentIeltsQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
 
       // Update badge
       ieltsBadge.textContent = `Part ${currentIeltsQuestion.part}`;
@@ -2709,7 +2601,13 @@
         definition: currentIeltsQuestion.question
       };
 
+      updateStructure();
       structureBox.style.display = 'none';
+      const toggleBtn = document.getElementById('toggleStructureBtn');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<span class="btn-icon">✨</span><span>Structure Guide</span>';
+        toggleBtn.classList.remove('active');
+      }
     }
 
     function initAIToggle() {
@@ -2815,24 +2713,12 @@
     }
 
     function newWord() {
-      // Check if in IELTS mode
-      if (isIeltsMode) {
-        newIeltsQuestion();
-        return;
-      }
-
-      reset();
-      currentWord = words[Math.floor(Math.random() * words.length)];
-      wordEl.textContent = currentWord.word;
-      definitionEl.textContent = currentWord.definition;
-      updateStructure();
-      structureBox.style.display = 'none';
-      document.getElementById('toggleStructureBtn').textContent = 'Show Structure Guide';
+      newIeltsQuestion();
     }
 
     function startTimer() {
       if (!currentWord || isRunning) {
-        if (!currentWord) showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!");
+        if (!currentWord) showAchievement("Get a question first!");
         return;
       }
       isRunning = true;
@@ -2936,10 +2822,10 @@
       const text = (manualTranscript.value || liveTranscript || '').trim();
       if (!text) return '';
       let header = '';
-      if (isIeltsMode && currentIeltsQuestion) {
+      if (currentIeltsQuestion) {
         header = `IELTS Part ${currentIeltsQuestion.part} Question: ${currentIeltsQuestion.question}\n`;
       } else if (currentWord) {
-        header = `Word prompt: ${currentWord.word}\n`;
+        header = `IELTS prompt: ${currentWord.word}\n`;
       }
       const duration = elapsedSeconds ? `Duration: ${formatTime(elapsedSeconds)}\n` : '';
       return `${header}${duration}Transcript: ${text}`.trim();
@@ -3153,7 +3039,7 @@
     }
 
     function startAudioRecording() {
-      if (!currentWord) { showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!"); return; }
+      if (!currentWord) { showAchievement("Get a question first!"); return; }
       recordedChunks = [];
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
@@ -3193,7 +3079,7 @@
     }
 
     function startVideoRecording() {
-      if (!currentWord) { showAchievement(isIeltsMode ? "Get a question first!" : "Generate a word first!"); return; }
+      if (!currentWord) { showAchievement("Get a question first!"); return; }
       recordedChunks = [];
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
@@ -3450,7 +3336,7 @@
 
     document.getElementById('toggleStructureBtn').addEventListener('click', () => {
       if (!currentWord) {
-        showAchievement(isIeltsMode ? "📝 Get a question first!" : "📝 Generate a word first!");
+        showAchievement("📝 Get a question first!");
         return;
       }
       const toggleBtn = document.getElementById('toggleStructureBtn');
