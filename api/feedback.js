@@ -9,6 +9,88 @@ export const config = {
   },
 };
 
+// IELTS Speaking Band Score System Prompt
+const IELTS_EXAMINER_PROMPT = `You are an expert IELTS speaking examiner with 10+ years of experience. Analyze this IELTS speaking response and provide detailed band scores and feedback.
+
+IMPORTANT: You MUST respond with ONLY valid JSON in this exact format (no markdown, no code blocks, just pure JSON):
+
+{
+  "overallBand": 7.0,
+  "scores": {
+    "fluencyCoherence": 7.0,
+    "lexicalResource": 7.0,
+    "grammaticalRange": 7.0,
+    "pronunciation": 7.0
+  },
+  "feedback": {
+    "summary": "One sentence overall assessment of the response",
+    "fluencyAnalysis": {
+      "score": 7.0,
+      "strengths": ["Specific strength with quoted example"],
+      "improvements": ["Specific area to improve with quoted example"],
+      "details": "Analysis of speech rate, pauses, hesitations, discourse markers, logical flow"
+    },
+    "lexicalAnalysis": {
+      "score": 7.0,
+      "strengths": ["Specific strength with quoted example"],
+      "improvements": ["Specific area to improve with quoted example"],
+      "details": "Analysis of vocabulary range, topic-specific words, collocations, word choice"
+    },
+    "grammarAnalysis": {
+      "score": 7.0,
+      "strengths": ["Specific strength with quoted example"],
+      "improvements": ["Specific area to improve with quoted example"],
+      "details": "Analysis of sentence structures, tenses, complex grammar, accuracy"
+    },
+    "pronunciationAnalysis": {
+      "score": 7.0,
+      "strengths": ["Specific strength"],
+      "improvements": ["Specific area to improve"],
+      "details": "Analysis of clarity, word stress, intonation patterns"
+    },
+    "quotedExamples": {
+      "effective": ["When you said '[exact quote]', this demonstrated [skill] because..."],
+      "needsWork": ["The phrase '[exact quote]' could be improved by..."]
+    },
+    "nextBandTips": [
+      "Specific actionable tip 1 to reach the next band level",
+      "Specific actionable tip 2 to reach the next band level",
+      "Specific actionable tip 3 to reach the next band level"
+    ],
+    "targetBand": 7.5
+  }
+}
+
+BAND SCORE GUIDELINES (use official IELTS descriptors):
+
+FLUENCY AND COHERENCE:
+- Band 9: Speaks fluently with only rare hesitation, fully coherent with sophisticated discourse markers
+- Band 7: Speaks at length without noticeable effort, uses discourse markers flexibly
+- Band 5: Can keep going but with frequent repetition, self-correction, slow speech
+
+LEXICAL RESOURCE:
+- Band 9: Wide vocabulary with precise meanings, natural collocations, idiomatic expressions
+- Band 7: Flexible vocabulary, some less common words, occasional errors in word choice
+- Band 5: Limited vocabulary, manages familiar topics, noticeable errors in word formation
+
+GRAMMATICAL RANGE AND ACCURACY:
+- Band 9: Wide range of structures, full flexibility, rare minor errors
+- Band 7: Range of complex structures, frequent error-free sentences, good control
+- Band 5: Basic sentence forms, limited complex structures, frequent errors
+
+PRONUNCIATION:
+- Band 9: Full range of features, effortless to understand, L1 accent has no effect
+- Band 7: Easy to understand, shows all positive features, some mispronunciation
+- Band 5: Generally intelligible, limited range of features, mispronunciation causes difficulty
+
+CRITICAL INSTRUCTIONS:
+1. Be honest and accurate - don't inflate scores
+2. Quote specific phrases from the transcript in your feedback
+3. Base scores strictly on IELTS band descriptors
+4. Calculate overall band as average of 4 scores (rounded to nearest 0.5)
+5. Provide concrete, actionable advice for improvement
+6. Focus on what IELTS examiners actually assess`;
+
 // Helper to parse multipart form data
 async function parseMultipartForm(req) {
   return new Promise((resolve, reject) => {
@@ -164,105 +246,138 @@ export default async function handler(req, res) {
 
       console.log('Metrics:', metrics);
 
-      // Step 3: Generate feedback with GPT-4o using enriched data
+      // Step 3: Generate IELTS band scores and feedback with GPT
       const metricsText = `
-Speech Metrics:
+SPEECH METRICS (use these for fluency analysis):
 - Speaking pace: ${metrics.wordsPerMinute} words per minute (${
-        metrics.wordsPerMinute < 120 ? 'slow' :
-        metrics.wordsPerMinute > 160 ? 'fast' :
-        'moderate'
+        metrics.wordsPerMinute < 120 ? 'slow - may indicate hesitation' :
+        metrics.wordsPerMinute > 160 ? 'fast - may affect clarity' :
+        'moderate - good pace'
       })
 - Pacing variation: ${metrics.pacingVariation}
-- Pauses: ${metrics.pauseCount} notable pauses detected
-- Average pause: ${metrics.averagePauseDuration}s
+- Notable pauses: ${metrics.pauseCount} pauses detected
+- Average pause duration: ${metrics.averagePauseDuration}s
 - Longest pause: ${metrics.longestPause}s
-- Filler words detected: ${metrics.fillerWordCount} ("um", "uh", "like", etc.)
+- Filler words: ${metrics.fillerWordCount} instances ("um", "uh", "like", etc.)
+- Total words: ${words.length}
+- Speech duration: ${duration}s
 `;
 
+      const question = fields.question || 'IELTS Speaking Question';
+      const part = fields.part || '1';
+
       const completion = await client.chat.completions.create({
-        model: 'gpt-5.1',
+        model: 'gpt-4.1-mini',
         messages: [
           {
             role: 'system',
-            content: [
-              'You are an expert speaking coach analyzing a recorded speech.',
-              'You have access to both the transcript AND detailed speech metrics (pace, pauses, filler words).',
-              '',
-              'CRITICAL: You MUST quote specific phrases from the speaker\'s actual words in your feedback.',
-              'Use quotation marks around their exact words when giving examples.',
-              '',
-              'Format your feedback as follows:',
-              '',
-              'Summary: [One sentence overall assessment]',
-              '',
-              'What you did well:',
-              '• [Strength with QUOTED EXAMPLE: "exact phrase they said" - explain why this worked]',
-              '• [Strength with QUOTED EXAMPLE: "exact phrase they said" - explain why this worked]',
-              '• [Strength with QUOTED EXAMPLE: "exact phrase they said" - explain why this worked]',
-              '',
-              'What to improve:',
-              '• [Area to improve with QUOTED EXAMPLE: "exact phrase they said" - suggest how to improve it]',
-              '• [Area to improve with QUOTED EXAMPLE: "exact phrase they said" - suggest how to improve it]',
-              '• [Area to improve with QUOTED EXAMPLE: "exact phrase they said" - suggest how to improve it]',
-              '',
-              'Next speech focus:',
-              '• [One actionable goal based on the data and their specific content]',
-              '',
-              'Examples of good feedback:',
-              '- When you said "the most important thing is trust", you emphasized the key word effectively',
-              '- The opening "I was completely lost" grabbed attention with vulnerability',
-              '- Try replacing "um, like, you know" with a brief pause - silence is powerful',
-              '',
-              'Reference actual metrics (pace, pauses, filler count) AND quote their specific words.',
-              'Make every point concrete and actionable with real examples from THIS speech.',
-              'Keep the tone encouraging but honest.'
-            ].join('\n'),
+            content: IELTS_EXAMINER_PROMPT
           },
           {
             role: 'user',
-            content: `${metricsText}\n\nTranscript:\n${transcript}`
+            content: `IELTS Speaking Part ${part} Question: "${question}"
+
+${metricsText}
+
+TRANSCRIPT OF RESPONSE:
+"${transcript}"
+
+Analyze this IELTS speaking response and provide band scores with detailed feedback. Remember to respond with ONLY valid JSON.`
           }
         ],
-        temperature: 0.5
+        temperature: 0.3,
+        response_format: { type: "json_object" }
       });
 
-      const feedback = completion.choices?.[0]?.message?.content?.trim() || 'No feedback generated.';
+      const responseContent = completion.choices?.[0]?.message?.content?.trim() || '{}';
+
+      let ieltsResult;
+      try {
+        ieltsResult = JSON.parse(responseContent);
+      } catch (parseError) {
+        console.error('Failed to parse IELTS feedback JSON:', parseError);
+        // Return a default structure if parsing fails
+        ieltsResult = {
+          overallBand: 0,
+          scores: {
+            fluencyCoherence: 0,
+            lexicalResource: 0,
+            grammaticalRange: 0,
+            pronunciation: 0
+          },
+          feedback: {
+            summary: 'Unable to analyze response. Please try again.',
+            error: true
+          }
+        };
+      }
 
       return res.status(200).json({
-        feedback,
+        ieltsScores: ieltsResult,
         transcript,
-        metrics
+        metrics,
+        question,
+        part
       });
 
     } else {
-      // Fallback: Handle old text-only format for backwards compatibility
-      const { text } = req.body || {};
+      // Fallback: Handle text-only format (manual transcript analysis)
+      const { text, question, part } = req.body || {};
       if (!text || typeof text !== 'string' || !text.trim()) {
         return res.status(400).json({ error: 'Missing transcript text or audio file' });
       }
 
       const completion = await client.chat.completions.create({
-        model: 'gpt-5.1',
+        model: 'gpt-4.1-mini',
         messages: [
           {
             role: 'system',
-            content: [
-              'You are an encouraging speaking coach.',
-              'Analyze the provided speech transcript and respond with the following labeled sections:',
-              'Summary: one sentence.',
-              'What you did well: exactly three bullet points.',
-              'What to improve: exactly three bullet points.',
-              'Next speech focus: one actionable bullet.',
-              'Keep the tone concise, specific, and constructive.'
-            ].join(' '),
+            content: IELTS_EXAMINER_PROMPT
           },
-          { role: 'user', content: text.trim() }
+          {
+            role: 'user',
+            content: `IELTS Speaking Part ${part || '1'} Question: "${question || 'General IELTS Question'}"
+
+TRANSCRIPT OF RESPONSE:
+"${text.trim()}"
+
+Note: This is a text-only analysis without audio metrics. For pronunciation, provide general guidance based on written patterns (word choice that might be difficult to pronounce, etc.).
+
+Analyze this IELTS speaking response and provide band scores with detailed feedback. Remember to respond with ONLY valid JSON.`
+          }
         ],
-        temperature: 0.5
+        temperature: 0.3,
+        response_format: { type: "json_object" }
       });
 
-      const feedback = completion.choices?.[0]?.message?.content?.trim() || 'No feedback generated.';
-      return res.status(200).json({ feedback });
+      const responseContent = completion.choices?.[0]?.message?.content?.trim() || '{}';
+
+      let ieltsResult;
+      try {
+        ieltsResult = JSON.parse(responseContent);
+      } catch (parseError) {
+        console.error('Failed to parse IELTS feedback JSON:', parseError);
+        ieltsResult = {
+          overallBand: 0,
+          scores: {
+            fluencyCoherence: 0,
+            lexicalResource: 0,
+            grammaticalRange: 0,
+            pronunciation: 0
+          },
+          feedback: {
+            summary: 'Unable to analyze response. Please try again.',
+            error: true
+          }
+        };
+      }
+
+      return res.status(200).json({
+        ieltsScores: ieltsResult,
+        transcript: text.trim(),
+        question: question || 'General IELTS Question',
+        part: part || '1'
+      });
     }
 
   } catch (error) {

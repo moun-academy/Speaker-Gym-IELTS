@@ -1687,6 +1687,274 @@
 
     .ai-feedback-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; padding: 12px; color: #e2e8f0; font-size: 14px; white-space: pre-wrap; }
 
+    /* IELTS Band Score Display */
+    .ielts-band-container {
+      display: none;
+    }
+
+    .ielts-band-container.show {
+      display: block;
+    }
+
+    .band-score-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .overall-band {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.1) 0%, rgba(234, 179, 8, 0.05) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .overall-band h3 {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-size: 42px;
+      font-weight: 800;
+      color: #facc15;
+      background: rgba(15, 23, 42, 0.8);
+      border: 4px solid;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .score-circle.band-low { border-color: #ef4444; color: #ef4444; }
+    .score-circle.band-mid { border-color: #f59e0b; color: #f59e0b; }
+    .score-circle.band-high { border-color: #22c55e; color: #22c55e; }
+
+    .band-label {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .criteria-scores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .score-item {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(55, 65, 81, 0.5);
+    }
+
+    .score-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .criteria-name {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    .score-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .score-value.band-low { color: #ef4444; }
+    .score-value.band-mid { color: #f59e0b; }
+    .score-value.band-high { color: #22c55e; }
+
+    .score-bar-bg {
+      height: 6px;
+      background: rgba(55, 65, 81, 0.5);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .score-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease-out;
+    }
+
+    .score-bar.band-low { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .score-bar.band-mid { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .score-bar.band-high { background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+    /* Feedback Sections */
+    .feedback-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feedback-section {
+      background: rgba(30, 41, 59, 0.4);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(55, 65, 81, 0.3);
+    }
+
+    .feedback-section h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-section.strengths h4 { color: #22c55e; }
+    .feedback-section.improvements h4 { color: #f59e0b; }
+    .feedback-section.next-level h4 { color: #3b82f6; }
+
+    .feedback-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .feedback-section li {
+      padding: 8px 0;
+      padding-left: 20px;
+      position: relative;
+      font-size: 14px;
+      color: #d1d5db;
+      line-height: 1.5;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+    }
+
+    .feedback-section li:last-child {
+      border-bottom: none;
+    }
+
+    .feedback-section li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .feedback-section.strengths li::before { background: #22c55e; }
+    .feedback-section.improvements li::before { background: #f59e0b; }
+    .feedback-section.next-level li::before { background: #3b82f6; }
+
+    .feedback-quote {
+      font-style: italic;
+      color: #94a3b8;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 8px 0;
+      border-left: 3px solid #facc15;
+    }
+
+    .criteria-detail {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(55, 65, 81, 0.3);
+    }
+
+    .criteria-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .criteria-detail-header h5 {
+      font-size: 13px;
+      color: #facc15;
+      font-weight: 600;
+    }
+
+    .criteria-detail-header .detail-score {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .criteria-detail-header .detail-score.band-low { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .criteria-detail-header .detail-score.band-mid { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .criteria-detail-header .detail-score.band-high { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+
+    .criteria-detail p {
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .target-band-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .target-band-box h4 {
+      font-size: 14px;
+      color: #3b82f6;
+      margin-bottom: 8px;
+    }
+
+    .target-band-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #60a5fa;
+    }
+
+    .feedback-summary {
+      background: rgba(250, 204, 21, 0.05);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .feedback-summary p {
+      color: #e2e8f0;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    @media (max-width: 480px) {
+      .criteria-scores {
+        grid-template-columns: 1fr;
+      }
+
+      .score-circle {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+    }
+
     /* Notification Settings */
     .notification-settings {
       background: rgba(30, 41, 59, 0.6);
@@ -2120,18 +2388,101 @@
     <!-- AI Feedback -->
     <div class="ai-panel">
       <div class="ai-header">
-        <h3>🤖 AI Speech Analysis</h3>
+        <h3>🎯 IELTS Band Score Analysis</h3>
         <label class="ai-toggle">
           <input type="checkbox" id="aiToggle" checked>
           <span class="toggle-slider"></span>
         </label>
       </div>
       <div class="helper">
-        <span id="aiToggleHelper">Get personalized feedback on your pace, pauses, and delivery.</span>
+        <span id="aiToggleHelper">Get official IELTS band scores with detailed examiner feedback.</span>
       </div>
       <textarea id="manualTranscript" class="transcript-input" placeholder="Transcript will appear here automatically after recording. You can also paste text for manual analysis."></textarea>
       <div class="ai-status" id="aiStatus">Waiting for your next recording.</div>
-      <div class="ai-feedback-box" id="aiFeedback">Your detailed feedback will appear here after your speech.</div>
+
+      <!-- Simple text feedback (fallback/initial state) -->
+      <div class="ai-feedback-box" id="aiFeedback">Your IELTS band scores and detailed feedback will appear here after your speech.</div>
+
+      <!-- IELTS Band Score Display -->
+      <div class="ielts-band-container" id="ieltsBandContainer">
+        <!-- Overall Band Score -->
+        <div class="overall-band">
+          <h3>Overall Band Score</h3>
+          <div class="score-circle" id="overallBandScore">-</div>
+          <div class="band-label" id="bandLabel">Complete a speech to see your score</div>
+        </div>
+
+        <!-- Four Criteria Scores -->
+        <div class="criteria-scores">
+          <div class="score-item">
+            <div class="score-item-header">
+              <span class="criteria-name">Fluency & Coherence</span>
+              <span class="score-value" id="fluencyScore">-</span>
+            </div>
+            <div class="score-bar-bg">
+              <div class="score-bar" id="fluencyBar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-header">
+              <span class="criteria-name">Lexical Resource</span>
+              <span class="score-value" id="lexicalScore">-</span>
+            </div>
+            <div class="score-bar-bg">
+              <div class="score-bar" id="lexicalBar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-header">
+              <span class="criteria-name">Grammar</span>
+              <span class="score-value" id="grammarScore">-</span>
+            </div>
+            <div class="score-bar-bg">
+              <div class="score-bar" id="grammarBar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-header">
+              <span class="criteria-name">Pronunciation</span>
+              <span class="score-value" id="pronunciationScore">-</span>
+            </div>
+            <div class="score-bar-bg">
+              <div class="score-bar" id="pronunciationBar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="feedback-summary" id="feedbackSummary" style="display: none;">
+          <p id="summaryText"></p>
+        </div>
+
+        <!-- Detailed Feedback Sections -->
+        <div class="feedback-sections">
+          <div class="feedback-section strengths" id="strengthsSection" style="display: none;">
+            <h4>✓ Strengths</h4>
+            <ul id="strengthsList"></ul>
+          </div>
+
+          <div class="feedback-section improvements" id="improvementsSection" style="display: none;">
+            <h4>→ Areas for Improvement</h4>
+            <ul id="improvementsList"></ul>
+          </div>
+
+          <div class="feedback-section next-level" id="nextLevelSection" style="display: none;">
+            <h4>🎯 To Reach Band <span id="targetBandDisplay">-</span></h4>
+            <ul id="nextLevelList"></ul>
+          </div>
+        </div>
+
+        <!-- Detailed Criteria Analysis (Expandable) -->
+        <div class="criteria-detail" id="criteriaDetails" style="display: none;">
+          <div id="fluencyDetail" class="criteria-detail-item"></div>
+          <div id="lexicalDetail" class="criteria-detail-item"></div>
+          <div id="grammarDetail" class="criteria-detail-item"></div>
+          <div id="pronunciationDetail" class="criteria-detail-item"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Structure Guide -->
@@ -2828,6 +3179,233 @@
     const ieltsPartSelector = document.getElementById('ieltsPartSelector');
     const newWordBtn = document.getElementById('newWordBtn');
 
+    // IELTS Band Score Elements
+    const ieltsBandContainer = document.getElementById('ieltsBandContainer');
+    const overallBandScore = document.getElementById('overallBandScore');
+    const bandLabel = document.getElementById('bandLabel');
+    const fluencyScore = document.getElementById('fluencyScore');
+    const lexicalScore = document.getElementById('lexicalScore');
+    const grammarScore = document.getElementById('grammarScore');
+    const pronunciationScore = document.getElementById('pronunciationScore');
+    const fluencyBar = document.getElementById('fluencyBar');
+    const lexicalBar = document.getElementById('lexicalBar');
+    const grammarBar = document.getElementById('grammarBar');
+    const pronunciationBar = document.getElementById('pronunciationBar');
+
+    // Helper function to get band class based on score
+    function getBandClass(score) {
+      if (score < 5) return 'band-low';
+      if (score < 7) return 'band-mid';
+      return 'band-high';
+    }
+
+    // Helper function to get band label
+    function getBandLabel(score) {
+      if (score >= 8.5) return 'Expert User';
+      if (score >= 7.5) return 'Very Good User';
+      if (score >= 6.5) return 'Good User';
+      if (score >= 5.5) return 'Competent User';
+      if (score >= 4.5) return 'Modest User';
+      return 'Limited User';
+    }
+
+    // Render IELTS Band Scores
+    function renderIeltsBandScores(ieltsData) {
+      if (!ieltsData || ieltsData.feedback?.error) {
+        // Show error in simple feedback box
+        aiFeedback.style.display = 'block';
+        ieltsBandContainer.classList.remove('show');
+        aiFeedback.textContent = ieltsData?.feedback?.summary || 'Unable to analyze response. Please try again.';
+        return;
+      }
+
+      // Hide simple feedback, show band container
+      aiFeedback.style.display = 'none';
+      ieltsBandContainer.classList.add('show');
+
+      const overall = ieltsData.overallBand || 0;
+      const scores = ieltsData.scores || {};
+      const feedback = ieltsData.feedback || {};
+
+      // Overall Band Score
+      overallBandScore.textContent = overall.toFixed(1);
+      overallBandScore.className = 'score-circle ' + getBandClass(overall);
+      bandLabel.textContent = getBandLabel(overall);
+
+      // Individual Criteria Scores
+      const fluency = scores.fluencyCoherence || 0;
+      const lexical = scores.lexicalResource || 0;
+      const grammar = scores.grammaticalRange || 0;
+      const pronunciation = scores.pronunciation || 0;
+
+      // Update score values and classes
+      fluencyScore.textContent = fluency.toFixed(1);
+      fluencyScore.className = 'score-value ' + getBandClass(fluency);
+      fluencyBar.style.width = (fluency / 9 * 100) + '%';
+      fluencyBar.className = 'score-bar ' + getBandClass(fluency);
+
+      lexicalScore.textContent = lexical.toFixed(1);
+      lexicalScore.className = 'score-value ' + getBandClass(lexical);
+      lexicalBar.style.width = (lexical / 9 * 100) + '%';
+      lexicalBar.className = 'score-bar ' + getBandClass(lexical);
+
+      grammarScore.textContent = grammar.toFixed(1);
+      grammarScore.className = 'score-value ' + getBandClass(grammar);
+      grammarBar.style.width = (grammar / 9 * 100) + '%';
+      grammarBar.className = 'score-bar ' + getBandClass(grammar);
+
+      pronunciationScore.textContent = pronunciation.toFixed(1);
+      pronunciationScore.className = 'score-value ' + getBandClass(pronunciation);
+      pronunciationBar.style.width = (pronunciation / 9 * 100) + '%';
+      pronunciationBar.className = 'score-bar ' + getBandClass(pronunciation);
+
+      // Summary
+      const summarySection = document.getElementById('feedbackSummary');
+      const summaryText = document.getElementById('summaryText');
+      if (feedback.summary) {
+        summaryText.textContent = feedback.summary;
+        summarySection.style.display = 'block';
+      } else {
+        summarySection.style.display = 'none';
+      }
+
+      // Strengths
+      const strengthsSection = document.getElementById('strengthsSection');
+      const strengthsList = document.getElementById('strengthsList');
+      strengthsList.innerHTML = '';
+      const allStrengths = [];
+
+      // Collect strengths from all criteria
+      if (feedback.fluencyAnalysis?.strengths) allStrengths.push(...feedback.fluencyAnalysis.strengths);
+      if (feedback.lexicalAnalysis?.strengths) allStrengths.push(...feedback.lexicalAnalysis.strengths);
+      if (feedback.grammarAnalysis?.strengths) allStrengths.push(...feedback.grammarAnalysis.strengths);
+      if (feedback.pronunciationAnalysis?.strengths) allStrengths.push(...feedback.pronunciationAnalysis.strengths);
+      if (feedback.quotedExamples?.effective) allStrengths.push(...feedback.quotedExamples.effective);
+
+      if (allStrengths.length > 0) {
+        allStrengths.slice(0, 5).forEach(strength => {
+          const li = document.createElement('li');
+          li.textContent = strength;
+          strengthsList.appendChild(li);
+        });
+        strengthsSection.style.display = 'block';
+      } else {
+        strengthsSection.style.display = 'none';
+      }
+
+      // Improvements
+      const improvementsSection = document.getElementById('improvementsSection');
+      const improvementsList = document.getElementById('improvementsList');
+      improvementsList.innerHTML = '';
+      const allImprovements = [];
+
+      // Collect improvements from all criteria
+      if (feedback.fluencyAnalysis?.improvements) allImprovements.push(...feedback.fluencyAnalysis.improvements);
+      if (feedback.lexicalAnalysis?.improvements) allImprovements.push(...feedback.lexicalAnalysis.improvements);
+      if (feedback.grammarAnalysis?.improvements) allImprovements.push(...feedback.grammarAnalysis.improvements);
+      if (feedback.pronunciationAnalysis?.improvements) allImprovements.push(...feedback.pronunciationAnalysis.improvements);
+      if (feedback.quotedExamples?.needsWork) allImprovements.push(...feedback.quotedExamples.needsWork);
+
+      if (allImprovements.length > 0) {
+        allImprovements.slice(0, 5).forEach(improvement => {
+          const li = document.createElement('li');
+          li.textContent = improvement;
+          improvementsList.appendChild(li);
+        });
+        improvementsSection.style.display = 'block';
+      } else {
+        improvementsSection.style.display = 'none';
+      }
+
+      // Next Level Tips
+      const nextLevelSection = document.getElementById('nextLevelSection');
+      const nextLevelList = document.getElementById('nextLevelList');
+      const targetBandDisplay = document.getElementById('targetBandDisplay');
+      nextLevelList.innerHTML = '';
+
+      if (feedback.nextBandTips && feedback.nextBandTips.length > 0) {
+        targetBandDisplay.textContent = feedback.targetBand ? feedback.targetBand.toFixed(1) : (overall + 0.5).toFixed(1);
+        feedback.nextBandTips.forEach(tip => {
+          const li = document.createElement('li');
+          li.textContent = tip;
+          nextLevelList.appendChild(li);
+        });
+        nextLevelSection.style.display = 'block';
+      } else {
+        nextLevelSection.style.display = 'none';
+      }
+
+      // Detailed Criteria Analysis
+      const criteriaDetails = document.getElementById('criteriaDetails');
+      const fluencyDetail = document.getElementById('fluencyDetail');
+      const lexicalDetail = document.getElementById('lexicalDetail');
+      const grammarDetail = document.getElementById('grammarDetail');
+      const pronunciationDetail = document.getElementById('pronunciationDetail');
+
+      let hasDetails = false;
+
+      if (feedback.fluencyAnalysis?.details) {
+        fluencyDetail.innerHTML = `
+          <div class="criteria-detail-header">
+            <h5>Fluency & Coherence</h5>
+            <span class="detail-score ${getBandClass(fluency)}">${fluency.toFixed(1)}</span>
+          </div>
+          <p>${feedback.fluencyAnalysis.details}</p>
+        `;
+        hasDetails = true;
+      } else {
+        fluencyDetail.innerHTML = '';
+      }
+
+      if (feedback.lexicalAnalysis?.details) {
+        lexicalDetail.innerHTML = `
+          <div class="criteria-detail-header">
+            <h5>Lexical Resource</h5>
+            <span class="detail-score ${getBandClass(lexical)}">${lexical.toFixed(1)}</span>
+          </div>
+          <p>${feedback.lexicalAnalysis.details}</p>
+        `;
+        hasDetails = true;
+      } else {
+        lexicalDetail.innerHTML = '';
+      }
+
+      if (feedback.grammarAnalysis?.details) {
+        grammarDetail.innerHTML = `
+          <div class="criteria-detail-header">
+            <h5>Grammatical Range</h5>
+            <span class="detail-score ${getBandClass(grammar)}">${grammar.toFixed(1)}</span>
+          </div>
+          <p>${feedback.grammarAnalysis.details}</p>
+        `;
+        hasDetails = true;
+      } else {
+        grammarDetail.innerHTML = '';
+      }
+
+      if (feedback.pronunciationAnalysis?.details) {
+        pronunciationDetail.innerHTML = `
+          <div class="criteria-detail-header">
+            <h5>Pronunciation</h5>
+            <span class="detail-score ${getBandClass(pronunciation)}">${pronunciation.toFixed(1)}</span>
+          </div>
+          <p>${feedback.pronunciationAnalysis.details}</p>
+        `;
+        hasDetails = true;
+      } else {
+        pronunciationDetail.innerHTML = '';
+      }
+
+      criteriaDetails.style.display = hasDetails ? 'block' : 'none';
+    }
+
+    // Reset IELTS band display
+    function resetIeltsBandDisplay() {
+      aiFeedback.style.display = 'block';
+      ieltsBandContainer.classList.remove('show');
+      aiFeedback.textContent = 'Your IELTS band scores and detailed feedback will appear here after your speech.';
+    }
+
     // Initialize
     function init() {
       checkNewDay();
@@ -3175,6 +3753,9 @@
         const formData = new FormData();
         formData.append('audio', audioBlob, 'speech.webm');
         formData.append('duration', duration.toString());
+        // Include IELTS question context for better analysis
+        formData.append('question', currentWord?.question || ieltsQuestionText?.textContent || 'IELTS Question');
+        formData.append('part', currentWord?.part?.toString() || '1');
         console.log('[INFO] Sending request to /api/feedback');
 
         const feedbackRes = await fetch('/api/feedback', {
@@ -3193,12 +3774,13 @@
         const feedbackData = await feedbackRes.json();
         console.log('[INFO] Feedback data received:', feedbackData);
 
-        const feedbackText = feedbackData.feedback?.trim() || 'No feedback generated.';
         const transcript = feedbackData.transcript || '';
         const metrics = feedbackData.metrics || {};
+        const ieltsScores = feedbackData.ieltsScores || null;
 
         console.log('[INFO] Transcript length:', transcript.length);
         console.log('[INFO] Metrics:', metrics);
+        console.log('[INFO] IELTS Scores:', ieltsScores);
 
         // Update UI with transcript
         if (transcript) {
@@ -3208,18 +3790,19 @@
           console.warn('[WARN] No transcript in response');
         }
 
-        // Display feedback with metrics
-        let displayText = feedbackText;
-        if (metrics.wordsPerMinute) {
-          displayText = `📊 Speech Metrics:\n` +
-            `• Pace: ${metrics.wordsPerMinute} WPM (${metrics.pacingVariation})\n` +
-            `• Pauses: ${metrics.pauseCount} pauses (avg ${metrics.averagePauseDuration}s)\n` +
-            `• Filler words: ${metrics.fillerWordCount}\n\n` +
-            displayText;
+        // Render IELTS Band Scores
+        if (ieltsScores) {
+          renderIeltsBandScores(ieltsScores);
+          const overall = ieltsScores.overallBand || 0;
+          setAiStatus(`IELTS Analysis complete! Overall Band: ${overall.toFixed(1)}`);
+        } else {
+          // Fallback to old display
+          aiFeedback.style.display = 'block';
+          ieltsBandContainer.classList.remove('show');
+          aiFeedback.textContent = 'Analysis complete but no band scores available.';
+          setAiStatus('Analysis complete');
         }
 
-        aiFeedback.textContent = displayText;
-        setAiStatus('AI analysis complete!');
         console.log('[SUCCESS] AI analysis complete');
 
         // Show rating modal to complete the speech and update stats
@@ -3230,6 +3813,11 @@
         console.error('[ERROR] Failed to get feedback:', err);
         console.error('[ERROR] Error details:', err.message, err.stack);
         setAiStatus(`Unable to analyze audio: ${err.message}. Check console for details.`, true);
+
+        // Reset to default state on error
+        aiFeedback.style.display = 'block';
+        ieltsBandContainer.classList.remove('show');
+        aiFeedback.textContent = 'Unable to analyze your speech. Please try again.';
 
         // Even if feedback fails, still show rating modal to update stats
         if (duration >= 30) {
@@ -3246,24 +3834,39 @@
       if (!trimmed) { setAiStatus('Add a transcript to get AI feedback.', true); return; }
       if (isRequestingFeedback) return;
       isRequestingFeedback = true;
-      setAiStatus('Requesting AI feedback...');
+      setAiStatus('Analyzing your response for IELTS band scores...');
 
       try {
         const feedbackRes = await fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: trimmed })
+          body: JSON.stringify({
+            text: trimmed,
+            question: currentWord?.question || ieltsQuestionText?.textContent || 'IELTS Question',
+            part: currentWord?.part?.toString() || '1'
+          })
         });
 
         if (!feedbackRes.ok) throw new Error('Feedback generation failed');
         const feedbackData = await feedbackRes.json();
-        const feedbackText = feedbackData.feedback?.trim() || 'No feedback generated.';
+        const ieltsScores = feedbackData.ieltsScores || null;
 
-        aiFeedback.textContent = feedbackText;
-        setAiStatus('Feedback ready!');
+        // Render IELTS Band Scores
+        if (ieltsScores) {
+          renderIeltsBandScores(ieltsScores);
+          const overall = ieltsScores.overallBand || 0;
+          setAiStatus(`IELTS Analysis complete! Overall Band: ${overall.toFixed(1)}`);
+        } else {
+          aiFeedback.style.display = 'block';
+          ieltsBandContainer.classList.remove('show');
+          aiFeedback.textContent = 'Analysis complete but no band scores available.';
+          setAiStatus('Analysis complete');
+        }
       } catch (err) {
         console.error(err);
         setAiStatus('Unable to fetch feedback right now.', true);
+        aiFeedback.style.display = 'block';
+        ieltsBandContainer.classList.remove('show');
       } finally {
         isRequestingFeedback = false;
       }
