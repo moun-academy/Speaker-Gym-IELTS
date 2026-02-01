@@ -81,6 +81,132 @@
       visibility: visible;
     }
 
+    /* Mandatory Login Overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .login-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .login-container {
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(250, 204, 21, 0.2);
+      text-align: center;
+    }
+
+    .login-logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #facc15;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 32px;
+    }
+
+    .login-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #facc15, #eab308);
+      border: none;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(250, 204, 21, 0.3);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-error {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      font-size: 13px;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .login-loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      color: #9ca3af;
+    }
+
+    .login-loading.show {
+      display: flex;
+    }
+
+    .login-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(250, 204, 21, 0.2);
+      border-top-color: #facc15;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .login-form.hidden {
+      display: none;
+    }
+
     /* Hamburger Menu Sidebar */
     .menu-sidebar {
       position: fixed;
@@ -1641,6 +1767,34 @@
 </head>
 
 <body>
+  <!-- Mandatory Login Overlay -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-container">
+      <div class="login-logo">🏋️</div>
+      <h1 class="login-title">The Speaker's Gym</h1>
+      <div style="font-size: 14px; color: #9ca3af; margin-bottom: 8px;">by <span style="color: #facc15; font-weight: 600;">MOUN Academy</span></div>
+      <p class="login-subtitle">Sign in to track your progress and sync across devices</p>
+
+      <div class="login-form" id="loginForm">
+        <button class="login-btn" id="loginGoogleBtn">
+          <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Sign in with Google
+        </button>
+        <div class="login-error" id="loginError"></div>
+      </div>
+
+      <div class="login-loading" id="loginLoading">
+        <div class="login-spinner"></div>
+        <span>Signing in...</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Hamburger Menu Overlay -->
   <div class="menu-overlay" id="menuOverlay"></div>
 
@@ -3722,6 +3876,17 @@
     initializeFirebase().then(() => {
       if (syncEnabled && firebaseReady) {
         setupAuthListeners();
+      } else {
+        // Firebase failed to initialize - show error on login overlay
+        const loginError = document.getElementById('loginError');
+        const loginGoogleBtn = document.getElementById('loginGoogleBtn');
+        if (loginError) {
+          loginError.textContent = 'Unable to connect to authentication service. Please check your internet connection and refresh the page.';
+          loginError.classList.add('show');
+        }
+        if (loginGoogleBtn) {
+          loginGoogleBtn.disabled = true;
+        }
       }
     });
 
@@ -4015,6 +4180,36 @@
       const profileDropdown = document.getElementById('profileDropdown');
       const profileIcon = document.getElementById('profileIcon');
 
+      // Mandatory login overlay elements
+      const loginOverlay = document.getElementById('loginOverlay');
+      const loginForm = document.getElementById('loginForm');
+      const loginLoading = document.getElementById('loginLoading');
+      const loginError = document.getElementById('loginError');
+      const loginGoogleBtn = document.getElementById('loginGoogleBtn');
+
+      // Login overlay sign-in button
+      if (loginGoogleBtn) {
+        loginGoogleBtn.addEventListener('click', async () => {
+          try {
+            // Show loading state
+            loginForm.classList.add('hidden');
+            loginLoading.classList.add('show');
+            loginError.classList.remove('show');
+
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await auth.signInWithPopup(provider);
+            // Auth state listener will handle hiding the overlay
+          } catch (error) {
+            console.error('[Auth] Login error:', error);
+            // Show error and restore form
+            loginLoading.classList.remove('show');
+            loginForm.classList.remove('hidden');
+            loginError.textContent = error.message || 'Sign in failed. Please try again.';
+            loginError.classList.add('show');
+          }
+        });
+      }
+
       // Toggle dropdown on click
       profileBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -4040,6 +4235,15 @@
           // User signed in
           currentUser = user;
           console.log('[Auth] User signed in:', user.email);
+
+          // Hide the mandatory login overlay
+          if (loginOverlay) {
+            loginOverlay.classList.add('hidden');
+            // Reset login form state
+            if (loginLoading) loginLoading.classList.remove('show');
+            if (loginForm) loginForm.classList.remove('hidden');
+            if (loginError) loginError.classList.remove('show');
+          }
 
           // Update profile UI
           if (profileSignedOut) profileSignedOut.style.display = 'none';
@@ -4069,9 +4273,14 @@
             });
 
         } else {
-          // User signed out
+          // User signed out - show mandatory login overlay
           currentUser = null;
           console.log('[Auth] User signed out');
+
+          // Show the mandatory login overlay
+          if (loginOverlay) {
+            loginOverlay.classList.remove('hidden');
+          }
 
           // Update profile UI
           if (profileSignedOut) profileSignedOut.style.display = 'block';
